@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="weather"
+            type="com.app.weatherforecast.data.InternalWeatherForecast" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.DetailsActivity">
+
+        <TextView
+            android:id="@+id/weather_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="16dp"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toTopOf="@+id/weather_desc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/weather_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="24 Jan Sep, Sun" />
+
+        <ImageView
+            android:id="@+id/weather_icon"
+            android:layout_width="63dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/weather_date"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/art_clouds" />
+
+        <TextView
+            android:id="@+id/weather_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="57dp"
+            android:layout_marginTop="8dp"
+            android:padding="16dp"
+            android:text='@{weather.description}'
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/temperature"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/weather_date"
+            tools:text="Clear sky" />
+
+        <TextView
+            android:id="@+id/temperature"
+            android:layout_width="113dp"
+            android:layout_height="57dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/no_weather_details"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/daily_details"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/weather_desc"
+            tools:text="9 C/10 C" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/daily_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/temperature" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

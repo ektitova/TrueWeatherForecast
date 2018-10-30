@@ -6,7 +6,7 @@ import com.app.weatherforecast.R
 import com.app.weatherforecast.data.WeatherSharedPreferences
 
 object WeatherUtils {
-    private val LOG_TAG = WeatherUtils::class.java.simpleName
+    private val TAG = WeatherUtils::class.java.simpleName
 
 
     private fun kelvinToFahrenheit(temperatureInKelvin: Double): Double {
@@ -44,8 +44,7 @@ object WeatherUtils {
 
 
     /*
- * Based on weather code data found at:
- * See http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
+ * Based on weather code data found at:https://openweathermap.org/weather-conditions
  */
     fun getIconResourceForWeatherCondition(weatherId: Int): Int {
 
@@ -77,7 +76,7 @@ object WeatherUtils {
 
     /*
  * Based on weather code data found at:
- * http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
+ * https://openweathermap.org/weather-conditions
  */
     fun getArtResourceForWeatherCondition(weatherId: Int): Int {
 
@@ -110,7 +109,25 @@ object WeatherUtils {
         } else if (weatherId >= 951 && weatherId <= 957) {
             return R.drawable.art_clear
         }
-        Log.e(LOG_TAG, "Unknown Weather: $weatherId")
+        Log.e(TAG, "Unknown Weather: $weatherId")
+        return R.drawable.art_storm
+    }
+
+    /*
+* Based on weather code data found at:
+* https://openweathermap.org/weather-conditions
+*/
+    fun getArtResourceForMainWeatherCondition(weatherDesc: String): Int {
+        when(weatherDesc){
+            "Thunderstorm" -> return R.drawable.art_storm
+            "Drizzle" -> return R.drawable.art_light_rain
+            "Rain"->return R.drawable.art_rain
+            "Snow"->return R.drawable.art_snow
+            "Atmosphere"->return R.drawable.art_fog
+            "Clear"->return R.drawable.art_clear
+            "Clouds"->return R.drawable.art_clouds
+        }
+        Log.e(TAG, "Unknown Weather: $weatherDesc")
         return R.drawable.art_storm
     }
 

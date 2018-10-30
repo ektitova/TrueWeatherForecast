@@ -7,11 +7,13 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.util.*
 
+
 object WeatherDataProvider {
     val TAG = WeatherDataProvider::class.java.simpleName
 
     //whole weather foresasts structure
     var weatherForecast: ArrayList<InternalWeatherForecast>? = null
+
 
     /**
      * returns and store whole weather forecast structure
@@ -28,21 +30,32 @@ object WeatherDataProvider {
             var dailyMax = forecast.list[position].main.temp_max
             var dailyMin = forecast.list[position].main.temp_min
             val dailyForecasts = arrayListOf<InternalDayWeatherForecast>()
-
+            val mainWeather =  mutableMapOf<String, Int>()
             do {
                 dailyMax = if (forecast.list[position].main.temp_max > dailyMax) forecast.list[position].main.temp_max else dailyMax
                 dailyMin = if (forecast.list[position].main.temp_min < dailyMin) forecast.list[position].main.temp_min else dailyMin
-                val dailyForecast = InternalDayWeatherForecast(forecast.list[position].weather.first().id, forecast.list[position].dateTime, forecast.list[position].humidity, forecast.list[position].pressure, forecast.list[position].wind.speed, forecast.list[position].wind.deg, forecast.list[position].main.temp_min, forecast.list[position].main.temp_max, forecast.list[position].weather.first().desc)
+                val dailyForecast = InternalDayWeatherForecast(forecast.list[position].weather.first().id, forecast.list[position].dateTime,
+                        forecast.list[position].humidity,
+                        forecast.list[position].pressure,
+                        forecast.list[position].wind.speed,
+                        forecast.list[position].main.temp_max,
+                        forecast.list[position].main.temp_min,
+                        forecast.list[position].weather.first().desc)
                 dailyForecasts.add(dailyForecast)
+                val desc = forecast.list[position].weather.first().main
+                if (mainWeather.containsKey(desc))
+                    mainWeather[desc] = mainWeather[desc]!! + 1
+                else mainWeather[desc] =  1
                 if (++position >= forecast.list.size) break
                 var nextDate = WeatherDateUtils.getDayNumber(forecast.list[position].dateTime)
             } while (dayNumber == nextDate)
-            var dailyWeatherId = dailyForecasts[dailyForecasts.size / 2].weatherId
-            var dailyDesc = dailyForecasts[dailyForecasts.size / 2].description
-            weatherForecast.add(InternalWeatherForecast(dailyWeatherId, date, dailyMax, dailyMin, dailyDesc, dailyForecasts))
+            val weather = mainWeather.toList().sortedByDescending { (_, value) -> value}.toMap()
+            var dailyDesc = weather.keys.first()
+            weatherForecast.add(InternalWeatherForecast(date, dailyMax, dailyMin, dailyDesc, dailyForecasts))
         }
         this.weatherForecast = weatherForecast
         return weatherForecast
+
     }
 
     /**
@@ -59,9 +72,9 @@ object WeatherDataProvider {
 /**
  * data class to store detailed weather forecast for the day
  */
-data class InternalDayWeatherForecast(val weatherId: Int, val time: Long, val humidity: Int, val pressure: Double, val windSpeed: Double, val windDirection: Double, val maxTemperature: Double, val minTemperature: Double, val description: String?)
+data class InternalDayWeatherForecast(val weatherId: Int, val time: Long, val humidity: Int, val pressure: Double, val windSpeed: Double, val maxTemperature: Double, val minTemperature: Double, val description: String?)
 
 /**
  * data class to store average weather forecast for the day and detailed weather forecast
  */
-data class InternalWeatherForecast(val weatherId: Int, val date: Long, val maxTemperature: Double, val minTemperature: Double, val description: String?, val dailyForecasts: List<InternalDayWeatherForecast>)
+data class InternalWeatherForecast( val date: Long, val maxTemperature: Double, val minTemperature: Double, val description: String, val dailyForecasts: List<InternalDayWeatherForecast>)

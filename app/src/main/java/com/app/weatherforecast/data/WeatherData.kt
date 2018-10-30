@@ -3,6 +3,9 @@ package com.app.weatherforecast.data
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 
+/**
+ * data class to represent internal structure of json object
+ */
 data class Coordinates(val lon: Double, val lat: Double)
 
 /**

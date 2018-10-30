@@ -10,6 +10,7 @@ import android.support.v4.content.Loader
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -34,7 +35,6 @@ class MainActivity : AppCompatActivity(), ForecastAdapterOnClickHandler, LoaderM
     private var mLoadingIndicator: ProgressBar? = null
     private var recyclerView: RecyclerView? = null
     private var mForecastAdapter: ForecastAdapter? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

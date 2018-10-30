@@ -2,6 +2,7 @@ package com.app.weatherforecast.ui
 
 import android.content.Context
 import android.content.Intent
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.ShareCompat
 import android.support.v7.app.AppCompatActivity
@@ -18,6 +19,9 @@ import com.app.weatherforecast.data.InternalWeatherForecast
 import com.app.weatherforecast.data.WeatherDataProvider
 import com.app.weatherforecast.utils.WeatherDateUtils
 import com.app.weatherforecast.utils.WeatherUtils
+import android.view.ViewGroup
+import android.util.DisplayMetrics
+import com.app.weatherforecast.databinding.ActivityDetailBinding
 
 
 class DetailsActivity : AppCompatActivity() {
@@ -30,18 +34,33 @@ class DetailsActivity : AppCompatActivity() {
     var mWeatherData: InternalWeatherForecast? = null
     private var recyclerView: RecyclerView? = null
     private var mDailyForecastAdapter: DailyForecastAdapter? = null
+    private var mMetrics: DisplayMetrics = DisplayMetrics()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.v(TAG, "onCreate()")
-        setContentView(R.layout.activity_details)
+        setContentView(R.layout.activity_detail)
+        val binding: ActivityDetailBinding = DataBindingUtil.setContentView(this,
+                R.layout.activity_detail)
         if (intent != null) {
+            windowManager.defaultDisplay.getMetrics(mMetrics)
             val position = intent.getIntExtra(INTENT_WEATHER_DATA, -1)
             if (position != -1) mWeatherData = WeatherDataProvider.weatherForecast!![position]
+            binding.weather = mWeatherData
             recyclerView = findViewById(R.id.daily_details)
             recyclerView!!.layoutManager = CenterZoomLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
             setDataToAdapter()
+            displayDetails(binding)
         }
+    }
+
+    private fun displayDetails(binding: ActivityDetailBinding){
+        binding.weatherDate.text = WeatherDateUtils.getFormattedDate(this,binding.weather!!.date, true )
+        val smallArtResourceId = WeatherUtils
+                .getArtResourceForMainWeatherCondition(binding.weather!!.description)
+        binding.weatherIcon.setImageResource(smallArtResourceId)
+        binding.temperature.text = WeatherUtils.formatHighLowTemperature(this,
+                binding.weather!!.maxTemperature, binding.weather!!.minTemperature)
     }
 
     private fun setDataToAdapter() {
@@ -77,8 +96,8 @@ class DetailsActivity : AppCompatActivity() {
 
     inner class CenterZoomLayoutManager : LinearLayoutManager {
 
-        private val mShrinkAmount = 0.15f
         private val mShrinkDistance = 0.9f
+        private val mShrinkAmount = 0.15f
 
         constructor(context: Context) : super(context)
 
@@ -148,7 +167,8 @@ class DetailsActivity : AppCompatActivity() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewtype: Int): DailyForecastViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.forecast_by_time_item, parent, false)
-
+            view.layoutParams.width = mMetrics!!.widthPixels/3
+            view.requestLayout()
             context = parent.context
             return DailyForecastViewHolder(view)
         }
@@ -167,7 +187,8 @@ class DetailsActivity : AppCompatActivity() {
 
             fun bind(value: InternalDayWeatherForecast) {
                 mTimeTextView.text = WeatherDateUtils.getFormattedTime(value.time)
-                mDescriptionTextView.text = value.description
+                mDescriptionTextView.inputType = InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+                mDescriptionTextView.text = value.description!!.capitalize()
                 val smallArtResourceId = WeatherUtils.getArtResourceForWeatherCondition(value.weatherId)
                 mWeatherIcon.setImageResource(smallArtResourceId)
                 mTempTextView.text = WeatherUtils.formatHighLowTemperature(context!!, value.maxTemperature, value.minTemperature)

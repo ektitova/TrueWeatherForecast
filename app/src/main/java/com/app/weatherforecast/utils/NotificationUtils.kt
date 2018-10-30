@@ -31,24 +31,25 @@ object NotificationUtils {
             WeatherUpdater.startImmediateSync(context)
         } else {
             Log.v(TAG, "make notification today weather")
-            val weatherId = data[0].weatherId
+            //val weatherId = data[0].weatherId
             val description = data[0].description
             val high = WeatherUtils.formatTemperature(context, data[0].maxTemperature)
             val low = WeatherUtils.formatTemperature(context, data[0].minTemperature)
 
             val resources = context.resources
-            val largeArtResourceId = WeatherUtils.getArtResourceForWeatherCondition(weatherId)
+            val largeArtResourceId = WeatherUtils
+                    .getArtResourceForMainWeatherCondition(data[0].description)
             val largeIcon = BitmapFactory.decodeResource(resources, largeArtResourceId)
 
             val notificationText = "Forecast: $description \n" + "High: $high \n" + "Low: $low"
-            val smallArtResourceId = WeatherUtils.getIconResourceForWeatherCondition(weatherId)
+            //val smallArtResourceId = WeatherUtils.getIconResourceForWeatherCondition(weatherId)
 
             val notificationTitle = context.getString(R.string.app_name)
 
             var notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val startActivityIntent = Intent(context.applicationContext, DetailsActivity::class.java)
             var pendingIntent = PendingIntent.getActivity(context, WEATHER_NOTIFICATION_ID, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-            val builder = NotificationCompat.Builder(context).setColor(ContextCompat.getColor(context, R.color.colorPrimary)).setSmallIcon(smallArtResourceId).setLargeIcon(largeIcon).setContentTitle(notificationTitle).setContentText(notificationText).setContentIntent(pendingIntent).setAutoCancel(true)
+            val builder = NotificationCompat.Builder(context).setColor(ContextCompat.getColor(context, R.color.colorPrimary)).setLargeIcon(largeIcon).setContentTitle(notificationTitle).setContentText(notificationText).setContentIntent(pendingIntent).setAutoCancel(true)
 
             //The channel is requied for Android Oreo
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

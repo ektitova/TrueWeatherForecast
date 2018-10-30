@@ -3,6 +3,7 @@ package com.app.weatherforecast.ui
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.text.InputType
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -29,7 +30,7 @@ class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler) : RecyclerVie
     }
 
     override fun getItemCount(): Int {
-        val size = mWeatherData!!.size
+        val size = 5
         Log.v(TAG, "getItemCount() $size")
         return size
     }
@@ -37,6 +38,7 @@ class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler) : RecyclerVie
     override fun onCreateViewHolder(parent: ViewGroup, viewtype: Int): ForecastViewHolder {
         Log.v(TAG, "onCreateViewHolder")
         val view = LayoutInflater.from(parent.context).inflate(R.layout.forecast_by_day_item, parent, false)
+        view.layoutParams.height = parent.measuredHeight/5
         context = parent.context
         return ForecastViewHolder(view)
     }
@@ -66,8 +68,8 @@ class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler) : RecyclerVie
             Log.v(TAG, "bind " + Date(value.date))
             mDateTextView.text = WeatherDateUtils.getFormattedDate(context!!, value.date, false)
             mDescriptionTextView.text = value.description
-            val smallArtResourceId = WeatherUtils.getArtResourceForWeatherCondition(value.weatherId)
-            mWeatherIcon.setImageResource(smallArtResourceId)
+           // val smallArtResourceId = WeatherUtils.getArtResourceForWeatherCondition(value.weatherId)
+            mWeatherIcon.setImageResource(WeatherUtils.getArtResourceForMainWeatherCondition(value.description))
             val roundedHigh = Math.round(value.maxTemperature)
             val roundedLow = Math.round(value.minTemperature)
             val formattedHigh = WeatherUtils.formatTemperature(context!!, roundedHigh.toDouble())

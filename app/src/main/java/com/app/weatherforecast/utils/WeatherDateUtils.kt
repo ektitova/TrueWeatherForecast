@@ -10,19 +10,14 @@ import java.util.*
 object WeatherDateUtils {
     private val TAG = WeatherDateUtils::class.java.simpleName
 
-    val SECOND_IN_MILLIS: Long = 1000
-    val MINUTE_IN_MILLIS = SECOND_IN_MILLIS * 60
-    val HOUR_IN_MILLIS = MINUTE_IN_MILLIS * 60
-    val DAY_IN_MILLIS = HOUR_IN_MILLIS * 24
+    private const val SECOND_IN_MILLIS: Long = 1000
+    private const val MINUTE_IN_MILLIS = SECOND_IN_MILLIS * 60
+    private const val HOUR_IN_MILLIS = MINUTE_IN_MILLIS * 60
+    private const val DAY_IN_MILLIS = HOUR_IN_MILLIS * 24
 
 
     /**
-     * This method returns the number of days since the epoch (January 01, 1970, 12:00 Midnight UTC)
-     * in UTC time from the current date.
-     *
-     * @param date A date in milliseconds in local time.
-     *
-     * @return The number of days in UTC time from the epoch.
+     * This method returns the number of days since the epoch January 01, 1970
      */
     fun getDayNumber(date: Long): Long {
         Log.v(TAG, "get day number from the date: " + Date(date))
@@ -32,12 +27,7 @@ object WeatherDateUtils {
     }
 
     /**
-     * This method returns the number of days since the epoch (January 01, 1970, 12:00 Midnight UTC)
-     * in UTC time from the current date.
-     *
-     * @param date A date in milliseconds in local time.
-     *
-     * @return The number of days in UTC time from the epoch.
+     * This method returns formatted time to display in HH:mm
      */
     fun getFormattedTime(date: Long): String {
         Log.v(TAG, "get formatted time from the date: " + Date(date))
@@ -45,8 +35,11 @@ object WeatherDateUtils {
         return localDateFormat.format(date)
     }
 
+    /**
+     * This method returns formatted date in Date
+     */
     fun getFormattedDate(context: Context, dateInMillis: Long, showFullDate: Boolean): String {
-        Log.v(TAG, "get formatted date from the ms: " + dateInMillis + " with details " + showFullDate)
+        Log.v(TAG, "get formatted date from the ms: $dateInMillis with details $showFullDate")
         //convert the given date in UTC timezone to the date in the local timezone
         val localDate = dateInMillis - TimeZone.getDefault().getOffset(dateInMillis).toLong()
         val dayNumber = getDayNumber(localDate)
