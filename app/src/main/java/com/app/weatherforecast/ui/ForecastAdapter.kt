@@ -1,6 +1,7 @@
 package com.app.weatherforecast.ui
 
 import android.content.Context
+import android.content.res.Configuration
 import android.support.v7.widget.RecyclerView
 import android.text.InputType
 import android.util.DisplayMetrics
@@ -18,11 +19,13 @@ import com.app.weatherforecast.utils.WeatherUtils
 import java.util.*
 
 
-class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler) : RecyclerView.Adapter<ForecastAdapter.ForecastViewHolder>() {
+class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler, context: Context) : RecyclerView.Adapter<ForecastAdapter.ForecastViewHolder>() {
     val TAG = ForecastAdapter::class.java.simpleName
     private var mWeatherData = WeatherDataProvider.weatherForecast
     private val mClickHandler = clickHandler
-    private var context: Context? = null
+    private var mContext = context
+    private val VIEW_TYPE_TODAY = 0
+    private val VIEW_TYPE_FUTURE_DAY = 1
 
     override fun onBindViewHolder(holder: ForecastViewHolder, position: Int) {
         Log.v(TAG, "onBindViewHolder on pos $position")
@@ -35,11 +38,38 @@ class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler) : RecyclerVie
         return size
     }
 
+    override fun getItemViewType(position: Int): Int {
+        val value =  mContext.resources.configuration.orientation;
+        return if (value == Configuration.ORIENTATION_PORTRAIT
+                && position == 0) {
+            return VIEW_TYPE_TODAY
+        } else VIEW_TYPE_FUTURE_DAY
+    }
+
+    fun getScreenOrientation(): Int {
+        return  mContext.resources.configuration.orientation;
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewtype: Int): ForecastViewHolder {
         Log.v(TAG, "onCreateViewHolder")
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.forecast_by_day_item, parent, false)
-        view.layoutParams.height = parent.measuredHeight/5
-        context = parent.context
+        var view:View
+        val screenOrientation = getScreenOrientation()
+        when (viewtype) {
+            VIEW_TYPE_TODAY -> {
+                view = LayoutInflater.from(parent.context).inflate(R.layout.forecast_today_item, parent, false)
+                if (screenOrientation == Configuration.ORIENTATION_PORTRAIT)
+                    view.layoutParams.height = parent.measuredHeight / 3
+            }
+            VIEW_TYPE_FUTURE_DAY -> {
+                view = LayoutInflater.from(parent.context).inflate(R.layout.forecast_by_day_item, parent, false)
+                if (screenOrientation == Configuration.ORIENTATION_PORTRAIT)
+                    view.layoutParams.height = parent.measuredHeight / 6
+            }
+            else ->{
+                throw IllegalArgumentException("Illegal view type")
+            }
+        }
+      //  context = parent.context
         return ForecastViewHolder(view)
     }
 
@@ -66,14 +96,14 @@ class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler) : RecyclerVie
 
         fun bind(value: InternalWeatherForecast) {
             Log.v(TAG, "bind " + Date(value.date))
-            mDateTextView.text = WeatherDateUtils.getFormattedDate(context!!, value.date, false)
+            mDateTextView.text = WeatherDateUtils.getFormattedDate( mContext, value.date, false)
             mDescriptionTextView.text = value.description
            // val smallArtResourceId = WeatherUtils.getArtResourceForWeatherCondition(value.weatherId)
             mWeatherIcon.setImageResource(WeatherUtils.getArtResourceForMainWeatherCondition(value.description))
             val roundedHigh = Math.round(value.maxTemperature)
             val roundedLow = Math.round(value.minTemperature)
-            val formattedHigh = WeatherUtils.formatTemperature(context!!, roundedHigh.toDouble())
-            val formattedLow = WeatherUtils.formatTemperature(context!!, roundedLow.toDouble())
+            val formattedHigh = WeatherUtils.formatTemperature( mContext, roundedHigh.toDouble())
+            val formattedLow = WeatherUtils.formatTemperature( mContext, roundedLow.toDouble())
             mHighTextView.text = formattedHigh
             mLowTextView.text = formattedLow
         }

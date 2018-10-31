@@ -28,7 +28,7 @@ object NotificationUtils {
     fun notifyUserOfWeatherUpdate(context: Context) {
         val data = WeatherDataProvider.weatherForecast
         if (data == null) {
-            WeatherUpdater.startImmediateSync(context)
+            WeatherUpdater.startImmediateSyncInBackground(context)
         } else {
             Log.v(TAG, "make notification today weather")
             //val weatherId = data[0].weatherId

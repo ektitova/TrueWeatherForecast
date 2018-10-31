@@ -43,11 +43,11 @@ class SettingsActivity : AppCompatActivity() {
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
             Log.v(TAG, "onSharedPreferenceChanged $key")
             if (key == getString(R.string.pref_location_key)) {
-                WeatherUpdater.startImmediateSync(activity)
+                WeatherUpdater.startImmediateSyncInBackground(activity)
             }
             val preference = findPreference(key)
             if (key == getString(R.string.pref_location_key)) run {
-                WeatherUpdater.startImmediateSync(context)
+                WeatherUpdater.startImmediateSyncInBackground(context)
             } else if (null != preference) {
                 if (preference !is CheckBoxPreference) {
                     setPreferenceSummary(preference, sharedPreferences!!.getString(key, "")!!)

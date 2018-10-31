@@ -35,6 +35,7 @@ object WeatherSharedPreferences {
         prefEditor.commit()
     }
 
+
     /**
      * returns true if the notification option is enabled in preferences, false otherwise
      */
@@ -46,7 +47,7 @@ object WeatherSharedPreferences {
 
     /**
      * returns stored last notification time
-     */
+    */
     fun getNotificationTime(context: Context): Int {
         val sp = PreferenceManager.getDefaultSharedPreferences(context)
         val time = sp.getInt("notificationTime", 0)

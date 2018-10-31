@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity(), ForecastAdapterOnClickHandler, LoaderM
         if (WeatherDataProvider.weatherForecast == null) {
             mForecastAdapter = null
         } else {
-            mForecastAdapter = ForecastAdapter(this)
+            mForecastAdapter = ForecastAdapter(this, this@MainActivity)
             recyclerView!!.adapter = mForecastAdapter
             recyclerView!!.setHasFixedSize(true)
         }
@@ -150,7 +150,7 @@ class MainActivity : AppCompatActivity(), ForecastAdapterOnClickHandler, LoaderM
 
             override fun loadInBackground(): ArrayList<InternalWeatherForecast>? {
                 Log.v(TAG, "loadInBackground() in the background thread")
-                return WeatherSyncTask.syncWeather(this@MainActivity)
+                return WeatherUpdater.startImmediateSync(this@MainActivity)
             }
 
             override fun deliverResult(data: ArrayList<InternalWeatherForecast>?) {

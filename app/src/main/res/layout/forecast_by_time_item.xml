@@ -12,15 +12,15 @@
         style="@style/TextAppearance.AppCompat.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="@dimen/forecast_by_time_item_margin_top"
         android:layout_gravity="center_horizontal|center_vertical"
         tools:text="12:00" />
 
     <ImageView
         android:id="@+id/weather_icon"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="20dp"
+        android:layout_width="@dimen/large_weather_icon_size"
+        android:layout_height="@dimen/large_weather_icon_size"
+        android:layout_marginTop="@dimen/forecast_by_time_item_margin_top"
         android:layout_gravity="center_horizontal|center_vertical"
         tools:src="@drawable/art_clouds" />
 
@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:singleLine="false"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="@dimen/forecast_by_time_item_margin_top"
         android:inputType="textMultiLine"
         android:maxLines= "2"
         tools:text="Clear sky" />
@@ -43,7 +43,7 @@
         android:layout_gravity="center_horizontal|center_vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="@dimen/forecast_by_time_item_margin_top"
         tools:text="10 C/8 C" />
 
 </LinearLayout>
