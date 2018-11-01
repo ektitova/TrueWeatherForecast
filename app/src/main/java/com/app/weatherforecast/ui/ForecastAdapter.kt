@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.Configuration
 import android.support.v7.widget.RecyclerView
 import android.text.InputType
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -56,7 +55,7 @@ class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler, context: Cont
         val screenOrientation = getScreenOrientation()
         when (viewtype) {
             VIEW_TYPE_TODAY -> {
-                view = LayoutInflater.from(parent.context).inflate(R.layout.forecast_today_item, parent, false)
+                view = LayoutInflater.from(parent.context).inflate(R.layout.forecast_details, parent, false)
                 if (screenOrientation == Configuration.ORIENTATION_PORTRAIT)
                     view.layoutParams.height = parent.measuredHeight / 3
             }

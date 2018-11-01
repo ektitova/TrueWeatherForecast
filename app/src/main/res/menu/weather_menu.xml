@@ -3,9 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
         <item
-            android:id="@+id/action_refresh"
-            android:title="@string/refresh" />
-        <item
             android:id="@+id/action_map"
             android:title="@string/map" />
         <item

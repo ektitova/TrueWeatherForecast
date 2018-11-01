@@ -24,6 +24,7 @@ import android.util.DisplayMetrics
 import com.app.weatherforecast.databinding.ActivityDetailBinding
 
 
+
 class DetailsActivity : AppCompatActivity() {
     val TAG = DetailsActivity::class.java.simpleName
 
@@ -46,8 +47,8 @@ class DetailsActivity : AppCompatActivity() {
             windowManager.defaultDisplay.getMetrics(mMetrics)
             val position = intent.getIntExtra(INTENT_WEATHER_DATA, -1)
             if (position != -1) mWeatherData = WeatherDataProvider.weatherForecast!![position]
-            binding.weather = mWeatherData
-            recyclerView = findViewById(R.id.daily_details)
+            binding.details?.weather = mWeatherData
+            recyclerView = findViewById(R.id.details_by_time)
             recyclerView!!.layoutManager = CenterZoomLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
             setDataToAdapter()
             displayDetails(binding)
@@ -55,12 +56,14 @@ class DetailsActivity : AppCompatActivity() {
     }
 
     private fun displayDetails(binding: ActivityDetailBinding){
-        binding.weatherDate.text = WeatherDateUtils.getFormattedDate(this,binding.weather!!.date, true )
+        binding.details?.weatherDate?.text = WeatherDateUtils.getFormattedDate(this,mWeatherData!!.date, true )
         val smallArtResourceId = WeatherUtils
-                .getArtResourceForMainWeatherCondition(binding.weather!!.description)
-        binding.weatherIcon.setImageResource(smallArtResourceId)
-        binding.temperature.text = WeatherUtils.formatHighLowTemperature(this,
-                binding.weather!!.maxTemperature, binding.weather!!.minTemperature)
+                .getArtResourceForMainWeatherCondition(mWeatherData!!.description)
+        binding.details?.weatherIcon?.setImageResource(smallArtResourceId)
+        binding.details?.high?.text = WeatherUtils.formatTemperature(this,
+                mWeatherData!!.maxTemperature)
+        binding.details?.low?.text = WeatherUtils.formatTemperature(this,
+                mWeatherData!!.minTemperature)
     }
 
     private fun setDataToAdapter() {

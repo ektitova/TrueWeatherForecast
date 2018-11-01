@@ -55,7 +55,6 @@ object WeatherDataProvider {
         }
         this.weatherForecast = weatherForecast
         return weatherForecast
-
     }
 
     /**

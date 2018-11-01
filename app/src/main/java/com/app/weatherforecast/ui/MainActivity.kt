@@ -18,13 +18,13 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.app.weatherforecast.R
-import com.app.weatherforecast.WeatherSyncTask
 import com.app.weatherforecast.WeatherUpdater
 import com.app.weatherforecast.data.InternalWeatherForecast
 import com.app.weatherforecast.data.WeatherDataProvider
 import com.app.weatherforecast.data.WeatherDataProvider.getWeatherByDayFromJson
 import com.app.weatherforecast.data.WeatherSharedPreferences
 import java.util.*
+import android.support.v4.widget.SwipeRefreshLayout
 
 
 class MainActivity : AppCompatActivity(), ForecastAdapterOnClickHandler, LoaderManager.LoaderCallbacks<ArrayList<InternalWeatherForecast>?> {
@@ -32,19 +32,25 @@ class MainActivity : AppCompatActivity(), ForecastAdapterOnClickHandler, LoaderM
 
     private val WEATHER_SEACH_LOADER: Int = 22
     private var mErrorTextView: TextView? = null
-    private var mLoadingIndicator: ProgressBar? = null
     private var recyclerView: RecyclerView? = null
     private var mForecastAdapter: ForecastAdapter? = null
+    private var mSwipeContainer: SwipeRefreshLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.v(TAG, "onCreate()")
         setContentView(R.layout.activity_main)
         recyclerView = findViewById(R.id.list_results)
-        mLoadingIndicator = findViewById(R.id.loading_indicator)
         mErrorTextView = findViewById(R.id.error_message)
         recyclerView!!.layoutManager = LinearLayoutManager(this)
-        initData()
+        mSwipeContainer = findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
+        // Setup refresh listener which triggers new data loading
+        mSwipeContainer?.setOnRefreshListener {
+            supportLoaderManager.restartLoader(WEATHER_SEACH_LOADER, null, this@MainActivity)
+        }
+        // Configure the refreshing colors
+        mSwipeContainer?.setColorSchemeResources(android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light, android.R.color.holo_red_light)
+       initData()
     }
 
     override fun onResume() {
@@ -56,6 +62,7 @@ class MainActivity : AppCompatActivity(), ForecastAdapterOnClickHandler, LoaderM
 
     private fun initData() {
         Log.v(TAG, "initData")
+        mSwipeContainer?.isRefreshing = true
         val weatherJson = WeatherSharedPreferences.getWeatherForecastJson(this@MainActivity)
         WeatherUpdater.initialize(this)
         if (weatherJson.isNullOrEmpty()) {
@@ -68,6 +75,7 @@ class MainActivity : AppCompatActivity(), ForecastAdapterOnClickHandler, LoaderM
 
     private fun setDataToAdapter() {
         Log.v(TAG, "setDataToAdapter()")
+        mSwipeContainer?.isRefreshing = false
         if (WeatherDataProvider.weatherForecast == null) {
             mForecastAdapter = null
         } else {
@@ -84,10 +92,6 @@ class MainActivity : AppCompatActivity(), ForecastAdapterOnClickHandler, LoaderM
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_refresh -> {
-                supportLoaderManager.restartLoader(WEATHER_SEACH_LOADER, null, this)
-                true
-            }
             R.id.action_map -> {
                 val location = WeatherSharedPreferences.getWeatherLocation(this@MainActivity)
                 openMap(location)
@@ -124,11 +128,12 @@ class MainActivity : AppCompatActivity(), ForecastAdapterOnClickHandler, LoaderM
     }
 
     override fun onLoadFinished(loader: Loader<ArrayList<InternalWeatherForecast>?>, data: ArrayList<InternalWeatherForecast>?) {
-        mLoadingIndicator!!.visibility = View.INVISIBLE
+        mSwipeContainer?.isRefreshing = false
         if (data != null) {
             recyclerView!!.visibility = View.VISIBLE
             setDataToAdapter()
         } else {
+            recyclerView!!.visibility = View.INVISIBLE
             mErrorTextView!!.visibility = View.VISIBLE
         }
     }
@@ -143,7 +148,6 @@ class MainActivity : AppCompatActivity(), ForecastAdapterOnClickHandler, LoaderM
                 if (mWeatherData != null) {
                     deliverResult(mWeatherData)
                 } else {
-                    mLoadingIndicator!!.visibility = View.VISIBLE
                     forceLoad()
                 }
             }
