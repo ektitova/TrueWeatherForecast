@@ -85,6 +85,7 @@ class DetailsActivity : AppCompatActivity() {
             R.id.action_share -> {
                 val shareIntent = ShareCompat.IntentBuilder.from(this@DetailsActivity)
                 shareIntent.setType("text/plain")
+                shareIntent.intent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.")
                 startActivity(shareIntent.intent)
                 true
             }

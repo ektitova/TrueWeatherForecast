@@ -97,7 +97,6 @@ class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler, context: Cont
             Log.v(TAG, "bind " + Date(value.date))
             mDateTextView.text = WeatherDateUtils.getFormattedDate( mContext, value.date, false)
             mDescriptionTextView.text = value.description
-           // val smallArtResourceId = WeatherUtils.getArtResourceForWeatherCondition(value.weatherId)
             mWeatherIcon.setImageResource(WeatherUtils.getArtResourceForMainWeatherCondition(value.description))
             val roundedHigh = Math.round(value.maxTemperature)
             val roundedLow = Math.round(value.minTemperature)
