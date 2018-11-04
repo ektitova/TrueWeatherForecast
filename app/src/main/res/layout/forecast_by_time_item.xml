@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    <data>
+        <variable
+            name="weather"
+            type="com.app.weatherforecast.data.InternalDayWeatherForecast" />
+    </data>
+<LinearLayout
     android:id="@+id/forecast_item"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
@@ -33,10 +39,9 @@
         android:layout_gravity="center_horizontal|center_vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:singleLine="false"
+        android:layout_weight="1.0"
         android:layout_marginTop="@dimen/forecast_by_time_item_margin_top"
-        android:inputType="textMultiLine"
-        android:maxLines= "2"
+        android:maxLines= "3"
         tools:text="Clear sky" />
 
     <TextView
@@ -49,3 +54,4 @@
         tools:text="10 C/8 C" />
 
 </LinearLayout>
+</layout>

@@ -22,7 +22,8 @@ import com.app.weatherforecast.utils.WeatherUtils
 import android.view.ViewGroup
 import android.util.DisplayMetrics
 import com.app.weatherforecast.databinding.ActivityDetailBinding
-
+import com.app.weatherforecast.databinding.ForecastByTimeItemBinding
+import kotlinx.android.synthetic.main.forecast_by_time_item.view.*
 
 
 class DetailsActivity : AppCompatActivity() {
@@ -36,6 +37,7 @@ class DetailsActivity : AppCompatActivity() {
     private var recyclerView: RecyclerView? = null
     private var mDailyForecastAdapter: DailyForecastAdapter? = null
     private var mMetrics: DisplayMetrics = DisplayMetrics()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +66,7 @@ class DetailsActivity : AppCompatActivity() {
                 mWeatherData!!.maxTemperature)
         binding.details?.low?.text = WeatherUtils.formatTemperature(this,
                 mWeatherData!!.minTemperature)
+        binding.details?.description?.text = mWeatherData!!.description
     }
 
     private fun setDataToAdapter() {
@@ -85,7 +88,7 @@ class DetailsActivity : AppCompatActivity() {
             R.id.action_share -> {
                 val shareIntent = ShareCompat.IntentBuilder.from(this@DetailsActivity)
                 shareIntent.setType("text/plain")
-                shareIntent.intent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.")
+                shareIntent.intent.putExtra(Intent.EXTRA_TEXT, mWeatherData.toString())
                 startActivity(shareIntent.intent)
                 true
             }
@@ -170,32 +173,23 @@ class DetailsActivity : AppCompatActivity() {
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewtype: Int): DailyForecastViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.forecast_by_time_item, parent, false)
-            view.layoutParams.width = mMetrics!!.widthPixels/3
-            view.requestLayout()
+            val binding: ForecastByTimeItemBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context),
+                    R.layout.forecast_by_time_item, parent, false)
+            binding.root.layoutParams.width = mMetrics!!.widthPixels/3
+            binding.root.requestLayout()
             context = parent.context
-            return DailyForecastViewHolder(view)
+            return DailyForecastViewHolder(binding)
         }
 
-
-        inner class DailyForecastViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            private val mTimeTextView: TextView = itemView.findViewById(R.id.weather_time)
-            private val mDescriptionTextView: TextView = itemView.findViewById(R.id.description)
-            private val mWeatherIcon: ImageView = itemView.findViewById(R.id.weather_icon)
-            private val mTempTextView: TextView = itemView.findViewById(R.id.temperature)
-
-            init {
-                mDescriptionTextView.inputType = InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-            }
-
+        inner class DailyForecastViewHolder(itemView: ForecastByTimeItemBinding) : RecyclerView.ViewHolder(itemView.root) {
 
             fun bind(value: InternalDayWeatherForecast) {
-                mTimeTextView.text = WeatherDateUtils.getFormattedTime(value.time)
-                mDescriptionTextView.inputType = InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE or InputType.TYPE_TEXT_FLAG_MULTI_LINE
-                mDescriptionTextView.text = value.description!!.capitalize()
+                itemView.weather_time.text = WeatherDateUtils.getFormattedTime(value.time)
+                itemView.description.text = value.description!!.capitalize()
+                itemView.description.inputType =InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE or InputType.TYPE_TEXT_FLAG_MULTI_LINE
                 val smallArtResourceId = WeatherUtils.getArtResourceForWeatherCondition(value.weatherId)
-                mWeatherIcon.setImageResource(smallArtResourceId)
-                mTempTextView.text = WeatherUtils.formatHighLowTemperature(context!!, value.maxTemperature, value.minTemperature)
+                itemView.weather_icon.setImageResource(smallArtResourceId)
+                itemView.temperature.text = WeatherUtils.formatHighLowTemperature(context!!, value.maxTemperature, value.minTemperature)
             }
         }
     }

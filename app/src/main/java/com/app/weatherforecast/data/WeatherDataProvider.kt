@@ -40,7 +40,7 @@ object WeatherDataProvider {
                         forecast.list[position].wind.speed,
                         forecast.list[position].main.temp_max,
                         forecast.list[position].main.temp_min,
-                        forecast.list[position].weather.first().desc)
+                        forecast.list[position].weather.first().desc!!)
                 dailyForecasts.add(dailyForecast)
                 val desc = forecast.list[position].weather.first().main
                 if (mainWeather.containsKey(desc))
@@ -71,7 +71,7 @@ object WeatherDataProvider {
 /**
  * data class to store detailed weather forecast for the day
  */
-data class InternalDayWeatherForecast(val weatherId: Int, val time: Long, val humidity: Int, val pressure: Double, val windSpeed: Double, val maxTemperature: Double, val minTemperature: Double, val description: String?)
+data class InternalDayWeatherForecast(val weatherId: Int, val time: Long, val humidity: Int, val pressure: Double, val windSpeed: Double, val maxTemperature: Double, val minTemperature: Double, val description: String)
 
 /**
  * data class to store average weather forecast for the day and detailed weather forecast

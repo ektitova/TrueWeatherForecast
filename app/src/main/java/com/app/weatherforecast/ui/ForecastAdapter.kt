@@ -2,19 +2,19 @@ package com.app.weatherforecast.ui
 
 import android.content.Context
 import android.content.res.Configuration
+import android.databinding.DataBindingUtil
+import android.databinding.ViewDataBinding
 import android.support.v7.widget.RecyclerView
-import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import com.app.weatherforecast.R
 import com.app.weatherforecast.data.InternalWeatherForecast
 import com.app.weatherforecast.data.WeatherDataProvider
 import com.app.weatherforecast.utils.WeatherDateUtils
 import com.app.weatherforecast.utils.WeatherUtils
+import kotlinx.android.synthetic.main.forecast_details.view.*
 import java.util.*
 
 
@@ -51,41 +51,35 @@ class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler, context: Cont
 
     override fun onCreateViewHolder(parent: ViewGroup, viewtype: Int): ForecastViewHolder {
         Log.v(TAG, "onCreateViewHolder")
-        var view:View
+        var binding: ViewDataBinding
         val screenOrientation = getScreenOrientation()
         when (viewtype) {
             VIEW_TYPE_TODAY -> {
-                view = LayoutInflater.from(parent.context).inflate(R.layout.forecast_details, parent, false)
+                binding = DataBindingUtil.inflate(LayoutInflater.from(parent.context),
+                        R.layout.forecast_details, parent, false)
                 if (screenOrientation == Configuration.ORIENTATION_PORTRAIT)
-                    view.layoutParams.height = parent.measuredHeight / 3
+                    binding.root.layoutParams.height = parent.measuredHeight / 3
             }
             VIEW_TYPE_FUTURE_DAY -> {
-                view = LayoutInflater.from(parent.context).inflate(R.layout.forecast_by_day_item, parent, false)
+                binding = DataBindingUtil.inflate(LayoutInflater.from(parent.context),
+                        R.layout.forecast_by_day_item, parent, false)
                 if (screenOrientation == Configuration.ORIENTATION_PORTRAIT)
-                    view.layoutParams.height = parent.measuredHeight / 6
+                    binding.root.layoutParams.height = parent.measuredHeight / 6
             }
             else ->{
                 throw IllegalArgumentException("Illegal view type")
             }
         }
-      //  context = parent.context
-        return ForecastViewHolder(view)
+        return ForecastViewHolder(binding)
     }
 
 
-    inner class ForecastViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    inner class ForecastViewHolder(itemView: ViewDataBinding) : RecyclerView.ViewHolder(itemView.root), View.OnClickListener {
         val TAG = ForecastViewHolder::class.java.simpleName
-
-        private val mDateTextView: TextView = itemView.findViewById(R.id.weather_date)
-        private val mDescriptionTextView: TextView = itemView.findViewById(R.id.description)
-        private val mWeatherIcon: ImageView = itemView.findViewById(R.id.weather_icon)
-        private val mHighTextView: TextView = itemView.findViewById(R.id.high)
-        private val mLowTextView: TextView = itemView.findViewById(R.id.low)
 
         init {
             Log.v(TAG, "init")
-            mDescriptionTextView.inputType = InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-            itemView.setOnClickListener(this)
+            itemView.root.setOnClickListener(this)
         }
 
         override fun onClick(itemView: View?) {
@@ -95,15 +89,15 @@ class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler, context: Cont
 
         fun bind(value: InternalWeatherForecast) {
             Log.v(TAG, "bind " + Date(value.date))
-            mDateTextView.text = WeatherDateUtils.getFormattedDate( mContext, value.date, false)
-            mDescriptionTextView.text = value.description
-            mWeatherIcon.setImageResource(WeatherUtils.getArtResourceForMainWeatherCondition(value.description))
+            itemView.weather_date.text = WeatherDateUtils.getFormattedDate( mContext, value.date, false)
+            itemView.description.text = value.description
+            itemView.weather_icon.setImageResource(WeatherUtils.getArtResourceForMainWeatherCondition(value.description))
             val roundedHigh = Math.round(value.maxTemperature)
             val roundedLow = Math.round(value.minTemperature)
             val formattedHigh = WeatherUtils.formatTemperature( mContext, roundedHigh.toDouble())
             val formattedLow = WeatherUtils.formatTemperature( mContext, roundedLow.toDouble())
-            mHighTextView.text = formattedHigh
-            mLowTextView.text = formattedLow
+            itemView.high.text = formattedHigh
+            itemView.low.text = formattedLow
         }
     }
 }

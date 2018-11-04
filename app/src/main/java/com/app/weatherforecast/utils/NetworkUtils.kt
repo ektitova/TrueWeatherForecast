@@ -27,7 +27,7 @@ object NetworkUtils {
 
 
     fun buildUrl(locationQuery: String): URL {
-        Log.v(TAG, "build URL request string for location: " + locationQuery)
+        Log.v(TAG, "build URL request string for location: $locationQuery")
         val builtUri = Uri.parse(OPEN_WEATHER_URL).buildUpon().appendQueryParameter(QUERY_PARAM, locationQuery).appendQueryParameter(FORMAT_PARAM, format).appendQueryParameter(APPID_PARAM, APPID).build()
 
         var url: URL? = null

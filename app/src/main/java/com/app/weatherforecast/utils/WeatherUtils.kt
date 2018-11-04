@@ -48,9 +48,9 @@ object WeatherUtils {
  */
     fun getIconResourceForWeatherCondition(weatherId: Int): Int {
 
-        if (weatherId >= 200 && weatherId <= 232) {
+        if (weatherId in 200..232) {
             return R.drawable.ic_storm
-        } else if (weatherId >= 300 && weatherId <= 321) {
+        } else if (weatherId in 300..321) {
             return R.drawable.ic_light_rain
         } else if (weatherId >= 500 && weatherId <= 504) {
             return R.drawable.ic_rain
