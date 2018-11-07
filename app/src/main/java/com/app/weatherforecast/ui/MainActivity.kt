@@ -1,14 +1,13 @@
 package com.app.weatherforecast.ui
 
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.LoaderManager
-import android.support.v4.content.AsyncTaskLoader
-import android.support.v4.content.Loader
+import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.Menu
@@ -16,72 +15,80 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import com.app.weatherforecast.R
-import com.app.weatherforecast.WeatherUpdater
 import com.app.weatherforecast.data.InternalWeatherForecast
 import com.app.weatherforecast.data.WeatherDataProvider
-import com.app.weatherforecast.data.WeatherDataProvider.getWeatherByDayFromJson
 import com.app.weatherforecast.data.WeatherSharedPreferences
-import java.util.*
+
 import android.support.v4.widget.SwipeRefreshLayout
+import com.app.weatherforecast.MainViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity(), ForecastAdapterOnClickHandler, LoaderManager.LoaderCallbacks<ArrayList<InternalWeatherForecast>?> {
+class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
     private val TAG = MainActivity::class.java.simpleName
 
-    private val WEATHER_SEACH_LOADER: Int = 22
     private var mErrorTextView: TextView? = null
     private var recyclerView: RecyclerView? = null
     private var mForecastAdapter: ForecastAdapter? = null
     private var mSwipeContainer: SwipeRefreshLayout? = null
+    private var viewModel:MainViewModel ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.v(TAG, "onCreate()")
         setContentView(R.layout.activity_main)
-        recyclerView = findViewById(R.id.list_results)
         mErrorTextView = findViewById(R.id.error_message)
-        recyclerView!!.layoutManager = LinearLayoutManager(this)
-        mSwipeContainer = findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
+        // mSwipeContainer = findViewById<View>(R.id.swipeContainer) as SwipeRefreshLayout
         // Setup refresh listener which triggers new data loading
-        mSwipeContainer?.setOnRefreshListener {
-            supportLoaderManager.restartLoader(WEATHER_SEACH_LOADER, null, this@MainActivity)
+        swipeContainer?.setOnRefreshListener {
+            viewModel?.loadWeatherList()
         }
         // Configure the refreshing colors
-        mSwipeContainer?.setColorSchemeResources(android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light, android.R.color.holo_red_light)
-       initData()
+        swipeContainer?.setColorSchemeResources(android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light, android.R.color.holo_red_light)
+        initData()
+    }
+
+    private fun updateView(fragment: Fragment) {
+        supportFragmentManager.beginTransaction().replace(R.id.contentFrame, fragment).addToBackStack(null).commit()
     }
 
     override fun onResume() {
         super.onResume()
         Log.v(TAG, "onResume()")
         if (WeatherDataProvider.weatherForecast == null) return
-        setDataToAdapter()
+      //  setDataToAdapter()
     }
 
     private fun initData() {
-        Log.v(TAG, "initData")
+        Log.v(TAG, "init data")
+        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        viewModel?.initialize()
+        viewModel?.weatherForecast?.observe(this, Observer { weatherForecast: List<InternalWeatherForecast>? ->
+            onDataLoaded(weatherForecast)
+        })
+        viewModel?.loadWeatherList()
         mSwipeContainer?.isRefreshing = true
-        val weatherJson = WeatherSharedPreferences.getWeatherForecastJson(this@MainActivity)
-        WeatherUpdater.initialize(this)
-        if (weatherJson.isNullOrEmpty()) {
-            supportLoaderManager.initLoader(WEATHER_SEACH_LOADER, null, this)
+    }
+
+
+    private fun onDataLoaded(weatherForecast: List<InternalWeatherForecast>?) {
+        mSwipeContainer?.isRefreshing = false
+        if (weatherForecast != null) {
+            Log.v(TAG, "Car list is loaded, number of items: " + weatherForecast.size)
+            displayForecastList()
         } else {
-            getWeatherByDayFromJson(weatherJson!!)
-            setDataToAdapter()
+            recyclerView?.visibility = View.INVISIBLE
+            mErrorTextView?.visibility = View.VISIBLE
         }
     }
 
-    private fun setDataToAdapter() {
-        Log.v(TAG, "setDataToAdapter()")
-        mSwipeContainer?.isRefreshing = false
-        if (WeatherDataProvider.weatherForecast == null) {
-            mForecastAdapter = null
-        } else {
-            mForecastAdapter = ForecastAdapter(this, this@MainActivity)
-            recyclerView!!.adapter = mForecastAdapter
-            recyclerView!!.setHasFixedSize(true)
-        }
+
+    private fun displayForecastList() {
+        Log.v(TAG, "display car list")
+        val fragment = ForecastListFragment.newInstance()
+        updateView(fragment)
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.weather_menu, menu)
@@ -96,7 +103,7 @@ class MainActivity : AppCompatActivity(), ForecastAdapterOnClickHandler, LoaderM
                 true
             }
             R.id.action_settings -> {
-                val intent = Intent(this@MainActivity, SettingsActivity::class.java)
+                val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
                 true
             }
@@ -114,52 +121,15 @@ class MainActivity : AppCompatActivity(), ForecastAdapterOnClickHandler, LoaderM
         }
     }
 
-    override fun onItemClick(position: Int) {
-        Log.v(TAG, "onItemClick on position: $position")
-        val detailsIntent = Intent(this@MainActivity, DetailsActivity::class.java)
-        detailsIntent.putExtra(DetailsActivity.INTENT_WEATHER_DATA, position)
-        startActivity(detailsIntent)
-    }
 
-    override fun onLoaderReset(p0: Loader<ArrayList<InternalWeatherForecast>?>) {
-        //not implement it
-    }
-
-    override fun onLoadFinished(loader: Loader<ArrayList<InternalWeatherForecast>?>, data: ArrayList<InternalWeatherForecast>?) {
-        mSwipeContainer?.isRefreshing = false
-        if (data != null) {
-            recyclerView!!.visibility = View.VISIBLE
-            setDataToAdapter()
-        } else {
-            recyclerView!!.visibility = View.INVISIBLE
-            mErrorTextView!!.visibility = View.VISIBLE
-        }
-    }
-
-    override fun onCreateLoader(id: Int, loaderArgs: Bundle?): Loader<ArrayList<InternalWeatherForecast>?> {
-
-        return object : AsyncTaskLoader<ArrayList<InternalWeatherForecast>?>(this) {
-            var mWeatherData: ArrayList<InternalWeatherForecast>? = null
-
-            override fun onStartLoading() {
-                Log.v(TAG, "onStartLoading weather data")
-                if (mWeatherData != null) {
-                    deliverResult(mWeatherData)
-                } else {
-                    forceLoad()
-                }
-            }
-
-            override fun loadInBackground(): ArrayList<InternalWeatherForecast>? {
-                Log.v(TAG, "loadInBackground() in the background thread")
-                return WeatherUpdater.startImmediateSync(this@MainActivity)
-            }
-
-            override fun deliverResult(data: ArrayList<InternalWeatherForecast>?) {
-                Log.v(TAG, "deliverResult() after loading weather data")
-                mWeatherData = data
-                super.deliverResult(data)
-            }
+    override fun onFragmentMessage(TAG: String, data: Any) {
+        Log.v(TAG, "fragment message from: " + TAG)
+        if (TAG == ForecastListFragment.TAG) {
+            val bundle = Bundle()
+            bundle.putInt(ForecastDetailsFragment.SELECTED_ITEM_NUMBER, data as Int)
+            val detailFragment = ForecastDetailsFragment.newInstance()
+            detailFragment.arguments = bundle
+            updateView(detailFragment)
         }
     }
 

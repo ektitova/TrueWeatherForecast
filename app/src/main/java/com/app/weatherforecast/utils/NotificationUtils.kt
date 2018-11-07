@@ -1,6 +1,5 @@
 package com.app.weatherforecast.utils
 
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -12,10 +11,10 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.app.weatherforecast.R
-import com.app.weatherforecast.WeatherUpdater
+import com.app.weatherforecast.WeatherSyncTask
 import com.app.weatherforecast.data.WeatherDataProvider
 import com.app.weatherforecast.data.WeatherSharedPreferences
-import com.app.weatherforecast.ui.DetailsActivity
+import com.app.weatherforecast.ui.ForecastDetailsFragment
 
 object NotificationUtils {
     private val TAG = NotificationUtils::class.java.simpleName
@@ -30,7 +29,7 @@ object NotificationUtils {
         val todayIndex = 0
         val data = WeatherDataProvider.weatherForecast
         if (data == null) {
-            WeatherUpdater.startImmediateSyncInBackground(context)
+            WeatherSyncTask.syncWeather(context)
         } else {
             Log.v(TAG, "make notification today weather")
             val description = data[todayIndex].description
@@ -46,8 +45,8 @@ object NotificationUtils {
             val notificationTitle = context.getString(R.string.app_name)
 
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            val startActivityIntent = Intent(context.applicationContext, DetailsActivity::class.java)
-            startActivityIntent.putExtra(DetailsActivity.INTENT_WEATHER_DATA, todayIndex)
+            val startActivityIntent = Intent(context.applicationContext, ForecastDetailsFragment::class.java)
+          //  startActivityIntent.putExtra(ForecastDetailsFragment.INTENT_WEATHER_DATA, todayIndex)
             val pendingIntent = PendingIntent.getActivity(context, WEATHER_NOTIFICATION_ID, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT)
             val builder = NotificationCompat.Builder(context)
                     .setColor(ContextCompat.getColor(context, R.color.colorPrimary))

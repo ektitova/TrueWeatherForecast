@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/today_day_item_selector"
         android:padding="@dimen/forecast_today_item_padding"
-        tools:context=".ui.DetailsActivity">
+        tools:context=".ui.ForecastDetailsFragment">
 
         <TextView
             android:id="@+id/weather_date"

@@ -1,21 +1,19 @@
 package com.app.weatherforecast.ui
 
-import android.content.Context
-import android.content.Intent
+import android.arch.lifecycle.ViewModelProviders
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
-import android.support.v14.preference.PreferenceFragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.CheckBoxPreference
 import android.support.v7.preference.ListPreference
 import android.support.v7.preference.Preference
+import android.support.v7.preference.PreferenceFragmentCompat
 import android.util.Log
 import android.view.MenuItem
 import com.app.weatherforecast.R
-import com.app.weatherforecast.WeatherUpdater
-import com.app.weatherforecast.utils.NotificationUtils
+import com.app.weatherforecast.SettingsViewModel
+import com.app.weatherforecast.WeatherSyncTask
+
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -25,7 +23,7 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Log.v(TAG, "onCreate()")
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        fragmentManager.beginTransaction().replace(android.R.id.content, WeatherSettings()).commit()
+        supportFragmentManager.beginTransaction().replace(android.R.id.content, WeatherSettingsFragment()).commit()
     }
 
 
@@ -37,17 +35,22 @@ class SettingsActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    class WeatherSettings : PreferenceFragment(), SharedPreferences.OnSharedPreferenceChangeListener {
-        val TAG = WeatherSettings::class.java.simpleName
 
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+    class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+        val TAG = WeatherSettingsFragment::class.java.simpleName
+        private var viewModel:SettingsViewModel ?= null
+
+
+        private fun initModel() {
+            Log.v(TAG, "init data")
+            viewModel = ViewModelProviders.of(this).get(SettingsViewModel::class.java)
+        }
+
+           override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
             Log.v(TAG, "onSharedPreferenceChanged $key")
-            if (key == getString(R.string.pref_location_key)) {
-                WeatherUpdater.startImmediateSyncInBackground(activity)
-            }
             val preference = findPreference(key)
             if (key == getString(R.string.pref_location_key)) run {
-                WeatherUpdater.startImmediateSyncInBackground(context)
+                WeatherSyncTask.syncWeather(context!!)
             } else if (null != preference) {
                 if (preference !is CheckBoxPreference) {
                     setPreferenceSummary(preference, sharedPreferences!!.getString(key, "")!!)
@@ -75,14 +78,14 @@ class SettingsActivity : AppCompatActivity() {
         override fun onCreatePreferences(bundle: Bundle?, s: String?) {
             Log.v(TAG, "onCreatePreference()")
             addPreferencesFromResource(R.xml.pref_screen)
-
-            val sharedPreferences = getPreferenceScreen().getSharedPreferences()
-            val prefScreen = getPreferenceScreen()
-            val count = prefScreen.getPreferenceCount()
+            initModel()
+            val sharedPreferences = preferenceScreen.sharedPreferences
+            val prefScreen = preferenceScreen
+            val count = prefScreen.preferenceCount
             for (i in 0 until count) {
                 val p = prefScreen.getPreference(i)
                 if (p !is CheckBoxPreference) {
-                    val value = sharedPreferences.getString(p.getKey(), "")
+                    val value = sharedPreferences.getString(p.key, "")
                     setPreferenceSummary(p, value!!)
                 }
             }
@@ -90,52 +93,29 @@ class SettingsActivity : AppCompatActivity() {
             // feedback preference click listener
             val sendFeedBack = findPreference(getString(R.string.key_send_feedback))
             sendFeedBack!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                sendFeedback(context.applicationContext)
+                viewModel?.sendFeedback(context!!.applicationContext)
                 true
             }
             // send notification click listener
             val sendNotification = findPreference(getString(R.string.key_send_notification))
             sendNotification!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                NotificationUtils.notifyUserOfWeatherUpdate(context.applicationContext)
+                viewModel?.sendNotififcation(context!!.applicationContext)
                 true
             }
         }
 
         override fun onStop() {
             super.onStop()
-            getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this)
+            preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
             Log.v(TAG, "onStop() listener is unregustered")
         }
 
         override fun onStart() {
             super.onStart()
             /* Register the preference change listener */
-            getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this)
+            preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
             Log.v(TAG, "onStart() listener is register ")
         }
-
-        /**
-         * Email client intent to send support mail
-         * Appends the necessary device information to email body
-         * useful when providing support
-         */
-        fun sendFeedback(context: Context) {
-            Log.v(TAG, "sendFeedback()")
-            var body: String? = null
-            try {
-                body = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName
-                body = "\n\n-----------------------------\nPlease don't remove this information\n Device OS: Android \n Device OS version: " + Build.VERSION.RELEASE + "\n App Version: " + body + "\n Device Brand: " + Build.BRAND + "\n Device Model: " + Build.MODEL + "\n Device Manufacturer: " + Build.MANUFACTURER
-            } catch (e: PackageManager.NameNotFoundException) {
-            }
-
-            val intent = Intent(Intent.ACTION_SEND)
-            intent.type = "message/rfc822"
-            intent.putExtra(Intent.EXTRA_EMAIL, arrayOf("ektitova10@gnail.com"))
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Query from android app")
-            intent.putExtra(Intent.EXTRA_TEXT, body)
-            context.startActivity(Intent.createChooser(intent, context.getString(R.string.choose_email_client)))
-        }
-
 
     }
 

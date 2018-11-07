@@ -47,10 +47,10 @@ object WeatherDataProvider {
                     mainWeather[desc] = mainWeather[desc]!! + 1
                 else mainWeather[desc] =  1
                 if (++position >= forecast.list.size) break
-                var nextDate = WeatherDateUtils.getDayNumber(forecast.list[position].dateTime)
+                val nextDate = WeatherDateUtils.getDayNumber(forecast.list[position].dateTime)
             } while (dayNumber == nextDate)
             val weather = mainWeather.toList().sortedByDescending { (_, value) -> value}.toMap()
-            var dailyDesc = weather.keys.first()
+            val dailyDesc = weather.keys.first()
             weatherForecast.add(InternalWeatherForecast(date, dailyMax, dailyMin, dailyDesc, dailyForecasts))
         }
         this.weatherForecast = weatherForecast

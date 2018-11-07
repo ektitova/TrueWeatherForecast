@@ -18,11 +18,11 @@ import kotlinx.android.synthetic.main.forecast_details.view.*
 import java.util.*
 
 
-class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler, context: Context) : RecyclerView.Adapter<ForecastAdapter.ForecastViewHolder>() {
+class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler, val context: Context?) : RecyclerView.Adapter<ForecastAdapter.ForecastViewHolder>() {
     val TAG = ForecastAdapter::class.java.simpleName
     private var mWeatherData = WeatherDataProvider.weatherForecast
     private val mClickHandler = clickHandler
-    private var mContext = context
+ //   private var mContext = context
     private val VIEW_TYPE_TODAY = 0
     private val VIEW_TYPE_FUTURE_DAY = 1
 
@@ -38,15 +38,15 @@ class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler, context: Cont
     }
 
     override fun getItemViewType(position: Int): Int {
-        val value =  mContext.resources.configuration.orientation;
+        val value =  context?.resources?.configuration?.orientation;
         return if (value == Configuration.ORIENTATION_PORTRAIT
                 && position == 0) {
             return VIEW_TYPE_TODAY
         } else VIEW_TYPE_FUTURE_DAY
     }
 
-    fun getScreenOrientation(): Int {
-        return  mContext.resources.configuration.orientation;
+    fun getScreenOrientation(): Int? {
+        return  context?.resources?.configuration?.orientation;
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewtype: Int): ForecastViewHolder {
@@ -89,13 +89,13 @@ class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler, context: Cont
 
         fun bind(value: InternalWeatherForecast) {
             Log.v(TAG, "bind " + Date(value.date))
-            itemView.weather_date.text = WeatherDateUtils.getFormattedDate( mContext, value.date, false)
+            itemView.weather_date.text = WeatherDateUtils.getFormattedDate( context!!, value.date, false)
             itemView.description.text = value.description
             itemView.weather_icon.setImageResource(WeatherUtils.getArtResourceForMainWeatherCondition(value.description))
             val roundedHigh = Math.round(value.maxTemperature)
             val roundedLow = Math.round(value.minTemperature)
-            val formattedHigh = WeatherUtils.formatTemperature( mContext, roundedHigh.toDouble())
-            val formattedLow = WeatherUtils.formatTemperature( mContext, roundedLow.toDouble())
+            val formattedHigh = WeatherUtils.formatTemperature( context!!, roundedHigh.toDouble())
+            val formattedLow = WeatherUtils.formatTemperature(context!!, roundedLow.toDouble())
             itemView.high.text = formattedHigh
             itemView.low.text = formattedLow
         }

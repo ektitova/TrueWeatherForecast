@@ -6,17 +6,17 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.DetailsActivity">
+        tools:context=".ui.ForecastDetailsFragment">
 
         <include
             android:id="@+id/details"
             layout="@layout/forecast_details"
-            app:layout_constraintBottom_toTopOf="@+id/details_by_time"
+            app:layout_constraintBottom_toTopOf="@+id/detailsByTimeView"
             app:layout_constraintVertical_bias="0.5"
             app:layout_constraintTop_toTopOf="parent" />
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/details_by_time"
+            android:id="@+id/detailsByTimeView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/activity_details_recyclerview_margin_bottom"
