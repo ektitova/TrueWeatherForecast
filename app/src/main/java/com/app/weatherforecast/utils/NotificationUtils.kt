@@ -11,7 +11,6 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.app.weatherforecast.R
-import com.app.weatherforecast.WeatherSyncTask
 import com.app.weatherforecast.data.WeatherDataProvider
 import com.app.weatherforecast.data.WeatherSharedPreferences
 import com.app.weatherforecast.ui.ForecastDetailsFragment
@@ -27,12 +26,14 @@ object NotificationUtils {
 
     fun notifyUserOfWeatherUpdate(context: Context) {
         val todayIndex = 0
-        val data = WeatherDataProvider.weatherForecast
-        if (data == null) {
-            WeatherSyncTask.syncWeather(context)
+        val weatherJson = WeatherSharedPreferences.getWeatherForecastJson(context)
+        val weatherDataProvider = WeatherDataProvider()
+        if (weatherJson.isNullOrEmpty()) {
+            weatherDataProvider.syncWeather(context)
         } else {
+            val data = weatherDataProvider.getWeatherByDayFromJson(weatherJson!!)
             Log.v(TAG, "make notification today weather")
-            val description = data[todayIndex].description
+            val description = data!![todayIndex].description
             val high = WeatherUtils.formatTemperature(context, data[todayIndex].maxTemperature)
             val low = WeatherUtils.formatTemperature(context, data[todayIndex].minTemperature)
 

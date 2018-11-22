@@ -2,6 +2,7 @@ package com.app.weatherforecast
 
 import android.os.AsyncTask
 import android.util.Log
+import com.app.weatherforecast.data.WeatherDataProvider
 import com.firebase.jobdispatcher.JobParameters
 import com.firebase.jobdispatcher.JobService
 
@@ -23,7 +24,7 @@ class UpdateWeatherJobService : JobService() {
         Log.v(TAG, "onStartJob")
         mloadWeatherTask = object : AsyncTask<Void, Void, Void>() {
             override fun doInBackground(vararg voids: Void): Void? {
-                WeatherSyncTask.syncWeather(applicationContext)
+                WeatherDataProvider().syncWeather(applicationContext)
                 return null
             }
 

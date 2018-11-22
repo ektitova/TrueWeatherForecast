@@ -3,41 +3,18 @@ package com.app.weatherforecast.ui
 import android.arch.lifecycle.ViewModelProviders
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.CheckBoxPreference
 import android.support.v7.preference.ListPreference
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.util.Log
-import android.view.MenuItem
+import com.app.weatherforecast.MainViewModel
 import com.app.weatherforecast.R
 import com.app.weatherforecast.SettingsViewModel
-import com.app.weatherforecast.WeatherSyncTask
 
 
-
-class SettingsActivity : AppCompatActivity() {
-    val TAG = SettingsActivity::class.java.simpleName
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.v(TAG, "onCreate()")
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportFragmentManager.beginTransaction().replace(android.R.id.content, WeatherSettingsFragment()).commit()
-    }
-
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val itemId = item.itemId
-        if (itemId == android.R.id.home) {
-            onBackPressed()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-
-    class WeatherSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
-        val TAG = WeatherSettingsFragment::class.java.simpleName
+    class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+        val TAG = SettingsFragment::class.java.simpleName
         private var viewModel:SettingsViewModel ?= null
 
 
@@ -50,8 +27,12 @@ class SettingsActivity : AppCompatActivity() {
             Log.v(TAG, "onSharedPreferenceChanged $key")
             val preference = findPreference(key)
             if (key == getString(R.string.pref_location_key)) run {
-                WeatherSyncTask.syncWeather(context!!)
-            } else if (null != preference) {
+                val viewModel = activity?.run {
+                    ViewModelProviders.of(this).get(MainViewModel::class.java)
+                } ?: throw Exception("Invalid Activity")
+                viewModel.reloadWeatherList()
+            }
+               if (null != preference) {
                 if (preference !is CheckBoxPreference) {
                     setPreferenceSummary(preference, sharedPreferences!!.getString(key, "")!!)
                 }
@@ -117,7 +98,11 @@ class SettingsActivity : AppCompatActivity() {
             Log.v(TAG, "onStart() listener is register ")
         }
 
+        companion object {
+            val TAG = SettingsFragment::class.java.simpleName
+            fun newInstance() = SettingsFragment()
+        }
+
     }
 
 
-}

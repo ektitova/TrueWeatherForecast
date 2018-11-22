@@ -1,5 +1,6 @@
 package com.app.weatherforecast.ui
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
@@ -12,7 +13,6 @@ import android.support.v7.widget.RecyclerView
 import android.text.InputType
 import android.util.Log
 import android.view.*
-import com.app.weatherforecast.R
 import com.app.weatherforecast.data.InternalDayWeatherForecast
 import com.app.weatherforecast.data.InternalWeatherForecast
 import com.app.weatherforecast.data.WeatherDataProvider
@@ -20,25 +20,19 @@ import com.app.weatherforecast.utils.WeatherDateUtils
 import com.app.weatherforecast.utils.WeatherUtils
 import android.view.ViewGroup
 import android.util.DisplayMetrics
+import com.app.weatherforecast.*
 
 import com.app.weatherforecast.databinding.ForecastByTimeItemBinding
 import com.app.weatherforecast.databinding.ForecastDetailsFragmentBinding
-import kotlinx.android.synthetic.main.forecast_by_time_item.view.*
-import kotlinx.android.synthetic.main.forecast_details.*
 import kotlinx.android.synthetic.main.forecast_details_fragment.*
 
 
 
 class ForecastDetailsFragment : Fragment(){
     val TAG = ForecastDetailsFragment::class.java.simpleName
-    var mWeatherData: InternalWeatherForecast? = null
     private var mDailyForecastAdapter: DailyForecastAdapter? = null
     private var mMetrics: DisplayMetrics?= null
-   // var carData = CarDataModel.carData
-
-//    constructor ForecastDetailsFragment(): Fragment(){
-//        setHasOptionsMenu(true)
-//    }
+    private lateinit var mWeatherData: InternalWeatherForecast
 
     init{
         setHasOptionsMenu(true)
@@ -48,19 +42,27 @@ class ForecastDetailsFragment : Fragment(){
         val binding: ForecastDetailsFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.forecast_details_fragment, container, false)
         binding.root.layoutParams.width= container!!.width
         binding.root.requestLayout()
+        mWeatherData = getData()
+        val itemVM = WeatherViewModelFactory(context!!,  mWeatherData, true)
+                .create(WeatherByDayItemViewModel::class.java)
+        binding.details?.viewModel = itemVM
+        setHasOptionsMenu(true)
+        return binding.root
+    }
+
+    private fun getData(): InternalWeatherForecast{
+        Log.v(ForecastListFragment.TAG, "init data")
+        val viewModel = activity?.run {
+            ViewModelProviders.of(this).get(MainViewModel::class.java)
+        } ?: throw Exception("Invalid Activity")
         val bundle = arguments
         val position = bundle!!.getInt(SELECTED_ITEM_NUMBER)
-        mWeatherData = WeatherDataProvider.weatherForecast!![position]
         Log.v(TAG, "detail screen loaded with item number $position")
-        binding.details?.weather = mWeatherData
-        setHasOptionsMenu(true)
-
-        return binding.root
+        return viewModel.weatherForecast.value!![position]
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         detailsByTimeView!!.layoutManager = CenterZoomLayoutManager(activity!!.applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        displayDetails()
         setDataToAdapter()
         mMetrics = DisplayMetrics()
         super.onViewCreated(view, savedInstanceState)
@@ -71,20 +73,6 @@ class ForecastDetailsFragment : Fragment(){
         fun newInstance() = ForecastDetailsFragment()
     }
 
-
-
-    private fun displayDetails(){
-        weather_date.text = WeatherDateUtils.getFormattedDate(activity!!.applicationContext ,mWeatherData!!.date, true )
-        val smallArtResourceId = WeatherUtils
-                .getArtResourceForMainWeatherCondition(mWeatherData!!.description)
-        weather_icon.setImageResource(smallArtResourceId)
-        high.text = WeatherUtils.formatTemperature(activity!!.applicationContext,
-                mWeatherData!!.maxTemperature)
-        low.text = WeatherUtils.formatTemperature(activity!!.applicationContext,
-                mWeatherData!!.minTemperature)
-        description.text = mWeatherData!!.description
-    }
-
     private fun setDataToAdapter() {
         Log.v(TAG, "setDataToAdapter()")
         mDailyForecastAdapter = DailyForecastAdapter()
@@ -92,39 +80,18 @@ class ForecastDetailsFragment : Fragment(){
         detailsByTimeView.setHasFixedSize(true)
     }
 
-
-
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        Log.v(TAG, "onOptionsItemSelected " + item.itemId)
-//        return when (item.itemId) {
-//            R.id.action_share -> {
-//                val shareIntent = ShareCompat.IntentBuilder.from(this@ForecastDetailsFragment)
-//                shareIntent.setType("text/plain")
-//                shareIntent.intent.putExtra(Intent.EXTRA_TEXT, mWeatherData.toString())
-//                startActivity(shareIntent.intent)
-//                true
-//            }
-//            R.id.action_settings -> {
-//                val intent = Intent(this, SettingsActivity::class.java)
-//                startActivity(intent)
-//                true
-//            }
-//            else -> super.onOptionsItemSelected(item)
-//        }
-//    }
-
-
-
     inner class DailyForecastAdapter : RecyclerView.Adapter<DailyForecastAdapter.DailyForecastViewHolder>() {
-        private var mDailyWeatherData = mWeatherData!!.dailyForecasts
-        private var context: Context? = null
+        private var mDailyWeatherData = mWeatherData.dailyForecasts
+        private lateinit var context: Context
 
         override fun onBindViewHolder(holderDaily: DailyForecastViewHolder, position: Int) {
-            holderDaily.bind(mDailyWeatherData!![position])
+            val itemVM = WeatherViewModelFactory(context, mDailyWeatherData[position])
+                    .create(WeatherByTimeItemViewModel::class.java)
+            holderDaily.itemViewBinding.viewModel = itemVM
         }
 
         override fun getItemCount(): Int {
-            return mDailyWeatherData!!.size
+            return mDailyWeatherData.size
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewtype: Int): DailyForecastViewHolder {
@@ -134,17 +101,8 @@ class ForecastDetailsFragment : Fragment(){
             return DailyForecastViewHolder(binding)
         }
 
-        inner class DailyForecastViewHolder(itemView: ForecastByTimeItemBinding) : RecyclerView.ViewHolder(itemView.root) {
+        inner class DailyForecastViewHolder(val itemViewBinding: ForecastByTimeItemBinding) : RecyclerView.ViewHolder(itemViewBinding.root)
 
-            fun bind(value: InternalDayWeatherForecast) {
-                itemView.weather_time.text = WeatherDateUtils.getFormattedTime(value.time)
-                itemView.description.text = value.description!!.capitalize()
-                itemView.description.inputType =InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE or InputType.TYPE_TEXT_FLAG_MULTI_LINE
-                val smallArtResourceId = WeatherUtils.getArtResourceForWeatherCondition(value.weatherId)
-                itemView.weather_icon.setImageResource(smallArtResourceId)
-                itemView.temperature.text = WeatherUtils.formatHighLowTemperature(context!!, value.maxTemperature, value.minTemperature)
-            }
-        }
     }
 
 

@@ -4,8 +4,8 @@
 
     <data>
         <variable
-            name="weather"
-            type="com.app.weatherforecast.data.InternalDayWeatherForecast" />
+            name="viewModel"
+            type="com.app.weatherforecast.WeatherByTimeItemViewModel" />
     </data>
 <LinearLayout
     android:id="@+id/forecast_item"
@@ -22,6 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/forecast_by_time_item_margin_top"
         android:layout_gravity="center_horizontal|center_vertical"
+        android:text='@{viewModel.date}'
         tools:text="12:00" />
 
     <ImageView
@@ -30,6 +31,7 @@
         android:layout_height="@dimen/large_weather_icon_size"
         android:layout_marginTop="@dimen/forecast_by_time_item_margin_top"
         android:layout_gravity="center_horizontal|center_vertical"
+        android:src='@{viewModel.icon}'
         tools:src="@drawable/art_clouds" />
 
 
@@ -38,10 +40,11 @@
         style="@style/TextAppearance.AppCompat.Large"
         android:layout_gravity="center_horizontal|center_vertical"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="1.0"
         android:layout_marginTop="@dimen/forecast_by_time_item_margin_top"
         android:maxLines= "3"
+        android:text='@{viewModel.description}'
         tools:text="Clear sky" />
 
     <TextView
@@ -51,6 +54,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/forecast_by_time_item_margin_top"
+        android:text='@{viewModel.temp}'
         tools:text="10 C/8 C" />
 
 </LinearLayout>

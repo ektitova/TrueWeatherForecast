@@ -24,21 +24,27 @@ class MainViewModel (application: Application) : AndroidViewModel(application) {
     private val SYNC_INTERVAL_HOURS = 3
     private val SYNC_INTERVAL_SECONDS = TimeUnit.HOURS.toSeconds(SYNC_INTERVAL_HOURS.toLong()).toInt()
     private val SYNC_FLEXTIME_SECONDS = SYNC_INTERVAL_SECONDS / 3
+    private val weatherDataProvider: WeatherDataProvider = WeatherDataProvider()
 
-
-    var sInitialized = false
+    private var sInitialized = false
 
     /**
      * execute async task to fetch car data
      */
-    fun loadWeatherList() {
+    fun loadWeatherList():  ArrayList<InternalWeatherForecast>?{
         Log.v(TAG, "load car list")
         val weatherJson = WeatherSharedPreferences.getWeatherForecastJson(context)
         if (weatherJson.isNullOrEmpty()) {
             FetchWeatherListTask().execute()
         } else {
-            weatherForecast.value = WeatherDataProvider.getWeatherByDayFromJson(weatherJson!!)
+            weatherForecast.value = weatherDataProvider.getWeatherByDayFromJson(weatherJson!!)
+            return weatherForecast.value
         }
+        return null
+    }
+
+    fun reloadWeatherList(){
+        FetchWeatherListTask().execute()
     }
 
     /**
@@ -47,12 +53,12 @@ class MainViewModel (application: Application) : AndroidViewModel(application) {
     inner class FetchWeatherListTask : AsyncTask<Void, Void, ArrayList<InternalWeatherForecast>?>() {
 
         override fun doInBackground(vararg param: Void): ArrayList<InternalWeatherForecast>? {
-            return WeatherSyncTask.syncWeather(context)
+            return weatherDataProvider.syncWeather(context)
         }
 
         override fun onPostExecute(weatherList: ArrayList<InternalWeatherForecast>?) {
-            weatherForecast.value = weatherList
-            //weatherForecast.postValue(carList)
+           /// weatherForecast.value = weatherList
+            weatherForecast.postValue(weatherList)
         }
     }
 

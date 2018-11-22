@@ -10,25 +10,42 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.app.weatherforecast.R
+import com.app.weatherforecast.WeatherByDayItemViewModel
+import com.app.weatherforecast.WeatherByTimeItemViewModel
+import com.app.weatherforecast.WeatherViewModelFactory
 import com.app.weatherforecast.data.InternalWeatherForecast
 import com.app.weatherforecast.data.WeatherDataProvider
+import com.app.weatherforecast.databinding.ForecastByDayItemBinding
+import com.app.weatherforecast.databinding.ForecastDetailsBinding
 import com.app.weatherforecast.utils.WeatherDateUtils
 import com.app.weatherforecast.utils.WeatherUtils
 import kotlinx.android.synthetic.main.forecast_details.view.*
 import java.util.*
 
 
-class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler, val context: Context?) : RecyclerView.Adapter<ForecastAdapter.ForecastViewHolder>() {
+class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler,
+                      val context: Context?,
+                      val weatherForecast:ArrayList<InternalWeatherForecast>) : RecyclerView.Adapter<ForecastAdapter.ForecastViewHolder>() {
     val TAG = ForecastAdapter::class.java.simpleName
-    private var mWeatherData = WeatherDataProvider.weatherForecast
     private val mClickHandler = clickHandler
- //   private var mContext = context
     private val VIEW_TYPE_TODAY = 0
     private val VIEW_TYPE_FUTURE_DAY = 1
 
     override fun onBindViewHolder(holder: ForecastViewHolder, position: Int) {
         Log.v(TAG, "onBindViewHolder on pos $position")
-        holder.bind(mWeatherData!![position])
+        val itemVM = WeatherViewModelFactory(context!!, weatherForecast[position], false)
+                .create(WeatherByDayItemViewModel::class.java)
+        when (holder.viewtype) {
+            VIEW_TYPE_TODAY -> {
+               (holder.itemViewBinding as ForecastDetailsBinding).viewModel = itemVM
+            }
+            VIEW_TYPE_FUTURE_DAY -> {
+               (holder.itemViewBinding as ForecastByDayItemBinding).viewModel = itemVM
+            }
+            else ->{
+                throw IllegalArgumentException("Illegal view type")
+            }
+        }
     }
 
     override fun getItemCount(): Int {
@@ -45,13 +62,13 @@ class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler, val context: 
         } else VIEW_TYPE_FUTURE_DAY
     }
 
-    fun getScreenOrientation(): Int? {
+    private fun getScreenOrientation(): Int? {
         return  context?.resources?.configuration?.orientation;
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewtype: Int): ForecastViewHolder {
         Log.v(TAG, "onCreateViewHolder")
-        var binding: ViewDataBinding
+        var binding: ViewDataBinding?=null
         val screenOrientation = getScreenOrientation()
         when (viewtype) {
             VIEW_TYPE_TODAY -> {
@@ -70,34 +87,21 @@ class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler, val context: 
                 throw IllegalArgumentException("Illegal view type")
             }
         }
-        return ForecastViewHolder(binding)
+        return ForecastViewHolder(binding, viewtype)
     }
 
 
-    inner class ForecastViewHolder(itemView: ViewDataBinding) : RecyclerView.ViewHolder(itemView.root), View.OnClickListener {
+    inner class ForecastViewHolder(val itemViewBinding: ViewDataBinding?, val viewtype: Int) : RecyclerView.ViewHolder(itemViewBinding!!.root), View.OnClickListener {
         val TAG = ForecastViewHolder::class.java.simpleName
 
         init {
             Log.v(TAG, "init")
-            itemView.root.setOnClickListener(this)
+            itemViewBinding!!.root.setOnClickListener(this)
         }
 
         override fun onClick(itemView: View?) {
             Log.v(TAG, "onClick() $adapterPosition")
             mClickHandler.onItemClick(adapterPosition)
-        }
-
-        fun bind(value: InternalWeatherForecast) {
-            Log.v(TAG, "bind " + Date(value.date))
-            itemView.weather_date.text = WeatherDateUtils.getFormattedDate( context!!, value.date, false)
-            itemView.description.text = value.description
-            itemView.weather_icon.setImageResource(WeatherUtils.getArtResourceForMainWeatherCondition(value.description))
-            val roundedHigh = Math.round(value.maxTemperature)
-            val roundedLow = Math.round(value.minTemperature)
-            val formattedHigh = WeatherUtils.formatTemperature( context!!, roundedHigh.toDouble())
-            val formattedLow = WeatherUtils.formatTemperature(context!!, roundedLow.toDouble())
-            itemView.high.text = formattedHigh
-            itemView.low.text = formattedLow
         }
     }
 }
