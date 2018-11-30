@@ -33,6 +33,9 @@ class MainActivityTest {
         mainActivity.supportFragmentManager.beginTransaction()
     }
 
+    /**
+     * test if weather list presents
+     */
     @Test
     @Throws(Exception::class)
     fun ensureWeatherListIsPresent() {
@@ -40,6 +43,9 @@ class MainActivityTest {
         assertThat(viewById, notNullValue())
     }
 
+    /**
+     * test items count, should be 5, not more
+     */
     @Test
     @Throws(Exception::class)
     fun testWeatherListDisplayedCount() {
@@ -47,7 +53,9 @@ class MainActivityTest {
         onView(withId(R.id.listResults)).check(CustomAssertions.hasItemCount(expectedCount))
     }
 
-
+    /**
+     * test click on the item, detail view displayed
+     */
     @Test
     fun testClickOnItem_checkIfDetailsIsDisplayed() {
         val itemNum = 1
@@ -55,6 +63,5 @@ class MainActivityTest {
         val fragmentManager = mainActivity.supportFragmentManager
         Assert.assertNotNull(fragmentManager.findFragmentByTag(ForecastDetailsFragment.TAG))
     }
-
 
 }

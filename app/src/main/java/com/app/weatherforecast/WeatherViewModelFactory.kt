@@ -11,7 +11,9 @@ class WeatherViewModelFactory(private val context: Context, vararg params: Any) 
 
     private val mParams: List<Any> = params.asList()
 
-
+    /**
+     *  creates instance of the model class depending on class type
+     */
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return if (modelClass == WeatherByTimeItemViewModel::class.java) {
             WeatherByTimeItemViewModel(context, mParams[0] as InternalDayWeatherForecast) as T

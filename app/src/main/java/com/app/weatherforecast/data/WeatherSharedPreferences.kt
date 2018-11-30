@@ -20,7 +20,7 @@ object WeatherSharedPreferences {
         if (storedWearherJson != weatherJson) {
             val prefEditor = sp.edit()
             prefEditor.putString("weatherJson", weatherJson) //**syntax error on tokens**
-            prefEditor.commit()
+            prefEditor.apply()
         }
     }
 
@@ -32,7 +32,7 @@ object WeatherSharedPreferences {
         Log.v(TAG, "saveNotificationTime in sec $currentTime")
         val prefEditor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         prefEditor.putInt("notificationTime", currentTime)
-        prefEditor.commit()
+        prefEditor.apply()
     }
 
 
@@ -66,11 +66,10 @@ object WeatherSharedPreferences {
     /**
      * returns stored weather location in preferences
      */
-    fun getWeatherLocation(context: Context): String {
+    fun getWeatherLocation(context: Context): String{
         val sp = PreferenceManager.getDefaultSharedPreferences(context)
         val keyForLocation = context.getString(R.string.pref_location_key)
         val defaultLocation = context.getString(R.string.pref_location_default)
-
         return sp.getString(keyForLocation, defaultLocation)
     }
 

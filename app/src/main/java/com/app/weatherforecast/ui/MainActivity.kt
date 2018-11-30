@@ -25,6 +25,9 @@ class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
         supportFragmentManager.beginTransaction().add(R.id.contentFrame, mainFragment).commit()
     }
 
+    /**
+     * update fragment view
+     */
     private fun updateView(fragment: Fragment) {
         supportFragmentManager.beginTransaction().replace(R.id.contentFrame, fragment).addToBackStack(null).commit()
     }
@@ -33,7 +36,6 @@ class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
         super.onResume()
         Log.v(TAG, "onResume()")
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.weather_menu, menu)
@@ -56,6 +58,9 @@ class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
         }
     }
 
+    /**
+     * open map with current location
+     */
     private fun openMap(location: String?) {
         Log.v(TAG, "open map for location: $location")
         val geoLocation = Uri.parse("geo:0,0?q=$location")

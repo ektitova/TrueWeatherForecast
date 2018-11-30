@@ -35,11 +35,14 @@ class ForecastDetailsFragment : Fragment() {
         binding.root.requestLayout()
         mWeatherData = getData()
         val itemVM = WeatherViewModelFactory(context!!, mWeatherData, true).create(WeatherByDayItemViewModel::class.java)
-        binding.details?.viewModel = itemVM
+        binding.details.viewModel = itemVM
         setHasOptionsMenu(true)
         return binding.root
     }
 
+    /**
+     * get data about selected displayed item
+     */
     private fun getData(): InternalWeatherForecast {
         Log.v(ForecastListFragment.TAG, "init data")
         val viewModel = activity?.run {
@@ -64,6 +67,9 @@ class ForecastDetailsFragment : Fragment() {
         val TAG = ForecastDetailsFragment::class.java.simpleName
     }
 
+    /**
+     * set adapter for recycle view weather forecast by time
+     */
     private fun setDataToAdapter() {
         Log.v(TAG, "setDataToAdapter()")
         mDailyForecastAdapter = DailyForecastAdapter()

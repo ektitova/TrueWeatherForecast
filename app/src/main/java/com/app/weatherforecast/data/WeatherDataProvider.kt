@@ -36,6 +36,9 @@ class WeatherDataProvider {
         }
     }
 
+    /**
+     * save notification time, and notify user if it was 24 hours since the last
+     */
     private fun saveNotificationTime(context: Context) {
         Log.v(TAG, "save last notification time and notify if it is needed")
         val timePassed = Calendar.getInstance().get(Calendar.SECOND)

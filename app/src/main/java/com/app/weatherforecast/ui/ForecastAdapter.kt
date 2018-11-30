@@ -47,19 +47,22 @@ class ForecastAdapter(clickHandler: ForecastAdapterOnClickHandler, val context: 
     }
 
     override fun getItemViewType(position: Int): Int {
-        val value = context?.resources?.configuration?.orientation;
+        val value = context?.resources?.configuration?.orientation
         return if (value == Configuration.ORIENTATION_PORTRAIT && position == 0) {
             return VIEW_TYPE_TODAY
         } else VIEW_TYPE_FUTURE_DAY
     }
 
+    /**
+     * get screen orientation and display different layouts for Today view depends on it
+     */
     private fun getScreenOrientation(): Int? {
-        return context?.resources?.configuration?.orientation;
+        return context?.resources?.configuration?.orientation
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewtype: Int): ForecastViewHolder {
         Log.v(TAG, "onCreateViewHolder")
-        var binding: ViewDataBinding? = null
+        val binding: ViewDataBinding?
         val screenOrientation = getScreenOrientation()
         when (viewtype) {
             VIEW_TYPE_TODAY -> {

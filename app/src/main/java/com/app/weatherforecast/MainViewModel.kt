@@ -28,7 +28,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private var sInitialized = false
 
     /**
-     * execute async task to fetch car data
+     * execute async task to fetch weather data
      */
     fun loadWeatherList(): ArrayList<InternalWeatherForecast>? {
         Log.v(TAG, "load car list")
@@ -42,12 +42,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         return null
     }
 
+    /**
+     * reload weather list if requires
+     */
     fun reloadWeatherList() {
         FetchWeatherListTask().execute()
     }
 
     /**
-     * class to fetch car list data
+     * class to fetch weather list data
      */
     inner class FetchWeatherListTask : AsyncTask<Void, Void, ArrayList<InternalWeatherForecast>?>() {
 

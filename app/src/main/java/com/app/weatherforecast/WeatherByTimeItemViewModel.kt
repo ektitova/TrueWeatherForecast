@@ -39,14 +39,16 @@ class WeatherByTimeItemViewModel(val context: Context, private val weatherData: 
      *  returns temperature
      */
     fun getTemp(): ObservableField<String> {
-        return ObservableField(WeatherUtils.formatHighLowTemperature(context, weatherData.maxTemperature, weatherData.minTemperature))
+        temp = ObservableField(WeatherUtils.formatHighLowTemperature(context, weatherData.maxTemperature, weatherData.minTemperature))
+        return temp
     }
 
     /**
      *  returns date
      */
     fun getDate(): ObservableField<String> {
-        return ObservableField(WeatherDateUtils.getFormattedTime(weatherData.time))
+        date = ObservableField(WeatherDateUtils.getFormattedTime(weatherData.time))
+        return date
     }
 
 }

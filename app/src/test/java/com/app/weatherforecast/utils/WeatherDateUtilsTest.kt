@@ -6,6 +6,9 @@ import org.junit.Test
 
 class WeatherDateUtilsTest {
 
+    /**
+     * test getDayNumber returns correct value
+     */
     @Test
     fun getDayNumberReturnsCorrectTest() {
         val dateInMilliSec: Long = 24 * 60 * 60 * 1000 * 2
@@ -14,6 +17,9 @@ class WeatherDateUtilsTest {
         Assert.assertEquals(expected, actual)
     }
 
+    /**
+     * test getDayNumber returns correct value if parameter is negative
+     */
     @Test
     fun getDayNumberReturnsCorrectWhenNegativeTest() {
         val dateInMilliSec: Long = -1
@@ -22,6 +28,9 @@ class WeatherDateUtilsTest {
         Assert.assertEquals(expected, actual)
     }
 
+    /**
+     * test getFormattedTime returns correct value
+     */
     @Test
     fun getFormattedTimeReturnsCorrectTest() {
         val dateInMilliSec: Long = 24 * 60 * 60 * 1000 + 60 * 1000
@@ -30,6 +39,9 @@ class WeatherDateUtilsTest {
         Assert.assertEquals(expected, actual)
     }
 
+    /**
+     * test getFormattedTime returns correct value if parameter is negative
+     */
     @Test
     fun getFormattedTimeReturnsCorrectWhenNegativeTest() {
         val dateInMilliSec: Long = -1

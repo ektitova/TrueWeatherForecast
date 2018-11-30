@@ -61,8 +61,6 @@ object NotificationUtils {
                 builder.setChannelId(WEATHER_NOTIFICATION_CHANNEL_ID)
                 notificationManager.createNotificationChannel(notificationChannel)
 
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                builder.priority = NotificationCompat.PRIORITY_HIGH
             }
             notificationManager.notify(WEATHER_NOTIFICATION_ID, builder.build())
             WeatherSharedPreferences.saveNotificationTime(context)

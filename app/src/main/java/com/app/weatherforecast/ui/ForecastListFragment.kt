@@ -35,6 +35,9 @@ class ForecastListFragment : Fragment(), ForecastAdapterOnClickHandler {
         initData()
     }
 
+    /**
+     * get weather forecast list
+     */
     private fun initData() {
         Log.v(TAG, "init data")
         viewModel = activity?.run {
@@ -48,7 +51,9 @@ class ForecastListFragment : Fragment(), ForecastAdapterOnClickHandler {
         swipeContainer?.isRefreshing = true
     }
 
-
+    /**
+     * update view once weather forecast is loaded, display error if not
+     */
     private fun onDataLoaded(weatherForecast: List<InternalWeatherForecast>?) {
         swipeContainer?.isRefreshing = false
         if (weatherForecast != null) {
@@ -60,7 +65,9 @@ class ForecastListFragment : Fragment(), ForecastAdapterOnClickHandler {
         }
     }
 
-
+    /**
+     * display weather forecast list once it is loaded
+     */
     private fun displayForecastList() {
         Log.v(TAG, "display weather list")
         listResults.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)

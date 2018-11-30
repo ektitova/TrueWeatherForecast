@@ -4,6 +4,9 @@ import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 
+/**
+ * class zoom focused element in Recycle View
+ */
 class CenterZoomLayoutManager : LinearLayoutManager {
 
     private val mShrinkDistance = 0.9f
@@ -13,7 +16,9 @@ class CenterZoomLayoutManager : LinearLayoutManager {
 
     constructor(context: Context, orientation: Int, reverseLayout: Boolean) : super(context, orientation, reverseLayout)
 
-
+    /**
+     * change size while scrolling vertically
+     */
     override fun scrollVerticallyBy(dy: Int, recycler: RecyclerView.Recycler?, state: RecyclerView.State?): Int {
         val orientation = orientation
         if (orientation == LinearLayoutManager.VERTICAL) {
@@ -37,6 +42,9 @@ class CenterZoomLayoutManager : LinearLayoutManager {
         }
     }
 
+    /**
+     * change size while scrolling horizontally
+     */
     override fun scrollHorizontallyBy(dx: Int, recycler: RecyclerView.Recycler?, state: RecyclerView.State?): Int {
         val orientation = orientation
         if (orientation == LinearLayoutManager.HORIZONTAL) {
