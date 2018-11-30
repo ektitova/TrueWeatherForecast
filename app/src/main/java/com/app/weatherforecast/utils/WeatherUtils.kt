@@ -54,7 +54,7 @@ object WeatherUtils {
     }
 
 
-    /**
+ /**
  * get picture of weather on weather code data found at:
  * https://openweathermap.org/weather-conditions
  */
