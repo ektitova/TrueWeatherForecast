@@ -10,7 +10,7 @@ object WeatherUtils {
 
 
     private fun kelvinToFahrenheit(temperatureInKelvin: Double): Double {
-        return temperatureInKelvin * 9/5 - 459.67
+        return temperatureInKelvin * 9 / 5 - 459.67
     }
 
     private fun kelvinToCelsius(temperatureInKelvin: Double): Double {
@@ -19,7 +19,7 @@ object WeatherUtils {
 
     fun formatTemperature(context: Context, temp: Double): String {
         val temperature: Double
-        val temperatureFormatResourceId:Int
+        val temperatureFormatResourceId: Int
 
         if (WeatherSharedPreferences.isMetric(context)) {
             temperature = kelvinToCelsius(temp)
@@ -86,14 +86,14 @@ object WeatherUtils {
 * https://openweathermap.org/weather-conditions
 */
     fun getArtResourceForMainWeatherCondition(weatherDesc: String): Int {
-        when(weatherDesc){
+        when (weatherDesc) {
             "Thunderstorm" -> return R.drawable.art_storm
             "Drizzle" -> return R.drawable.art_light_rain
-            "Rain"->return R.drawable.art_rain
-            "Snow"->return R.drawable.art_snow
-            "Atmosphere"->return R.drawable.art_fog
-            "Clear"->return R.drawable.art_clear
-            "Clouds"->return R.drawable.art_clouds
+            "Rain" -> return R.drawable.art_rain
+            "Snow" -> return R.drawable.art_snow
+            "Atmosphere" -> return R.drawable.art_fog
+            "Clear" -> return R.drawable.art_clear
+            "Clouds" -> return R.drawable.art_clouds
         }
         Log.e(TAG, "Unknown Weather: $weatherDesc")
         return R.drawable.art_storm

@@ -5,10 +5,7 @@ import android.util.Log
 import com.app.weatherforecast.utils.NetworkUtils
 import com.app.weatherforecast.utils.NotificationUtils
 import com.app.weatherforecast.utils.WeatherDateUtils
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.readValue
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -16,7 +13,7 @@ import java.util.concurrent.TimeUnit
 class WeatherDataProvider {
     val TAG = WeatherDataProvider::class.java.simpleName
 
-    private  val NOTIFICATIONS_INTERVAL_MINUTES: Int = 1440
+    private val NOTIFICATIONS_INTERVAL_MINUTES: Int = 1440
     private val NOTIFICATIONS_INTERVAL_SECOND: Long = TimeUnit.MINUTES.toSeconds(NOTIFICATIONS_INTERVAL_MINUTES.toLong())
 
     /**
@@ -39,7 +36,7 @@ class WeatherDataProvider {
         }
     }
 
-    private fun saveNotificationTime(context: Context){
+    private fun saveNotificationTime(context: Context) {
         Log.v(TAG, "save last notification time and notify if it is needed")
         val timePassed = Calendar.getInstance().get(Calendar.SECOND)
         -WeatherSharedPreferences.getNotificationTime(context)
@@ -64,32 +61,24 @@ class WeatherDataProvider {
             var dailyMax = forecast.list[position].main!!.temp_max
             var dailyMin = forecast.list[position].main!!.temp_min
             val dailyForecasts = arrayListOf<InternalDayWeatherForecast>()
-            val mainWeather =  mutableMapOf<String?, Int>()
+            val mainWeather = mutableMapOf<String?, Int>()
             do {
                 dailyMax = if (forecast.list[position].main!!.temp_max > dailyMax) forecast.list[position].main!!.temp_max else dailyMax
                 dailyMin = if (forecast.list[position].main!!.temp_min < dailyMin) forecast.list[position].main!!.temp_min else dailyMin
-                val dailyForecast = InternalDayWeatherForecast(forecast.list[position].weather.first().id, forecast.list[position].dateTime,
-                        forecast.list[position].humidity,
-                        forecast.list[position].pressure,
-                        forecast.list[position].wind.speed,
-                        forecast.list[position].main!!.temp_max,
-                        forecast.list[position].main!!.temp_min,
-                        forecast.list[position].weather.first().desc)
+                val dailyForecast = InternalDayWeatherForecast(forecast.list[position].weather.first().id, forecast.list[position].dateTime, forecast.list[position].humidity, forecast.list[position].pressure, forecast.list[position].wind.speed, forecast.list[position].main!!.temp_max, forecast.list[position].main!!.temp_min, forecast.list[position].weather.first().desc)
                 dailyForecasts.add(dailyForecast)
                 val desc = forecast.list[position].weather.first().main
-                if (mainWeather.containsKey(desc))
-                    mainWeather[desc] = mainWeather[desc]!! + 1
-                else mainWeather[desc] =  1
+                if (mainWeather.containsKey(desc)) mainWeather[desc] = mainWeather[desc]!! + 1
+                else mainWeather[desc] = 1
                 if (++position >= forecast.list.size) break
                 val nextDate = WeatherDateUtils.getDayNumber(forecast.list[position].dateTime)
             } while (dayNumber == nextDate)
-            val weather = mainWeather.toList().sortedByDescending { (_, value) -> value}.toMap()
+            val weather = mainWeather.toList().sortedByDescending { (_, value) -> value }.toMap()
             val dailyDesc = weather.keys.first()
             weatherForecast.add(InternalWeatherForecast(date, dailyMax, dailyMin, dailyDesc!!, dailyForecasts))
         }
         return weatherForecast
     }
-
 
 
 }

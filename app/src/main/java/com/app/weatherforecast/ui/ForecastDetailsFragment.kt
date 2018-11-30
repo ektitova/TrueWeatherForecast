@@ -1,56 +1,46 @@
 package com.app.weatherforecast.ui
 
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
-import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.app.ShareCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.text.InputType
-import android.util.Log
-import android.view.*
-import com.app.weatherforecast.data.InternalDayWeatherForecast
-import com.app.weatherforecast.data.InternalWeatherForecast
-import com.app.weatherforecast.data.WeatherDataProvider
-import com.app.weatherforecast.utils.WeatherDateUtils
-import com.app.weatherforecast.utils.WeatherUtils
-import android.view.ViewGroup
 import android.util.DisplayMetrics
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.app.weatherforecast.*
-
+import com.app.weatherforecast.data.InternalWeatherForecast
 import com.app.weatherforecast.databinding.ForecastByTimeItemBinding
 import com.app.weatherforecast.databinding.ForecastDetailsFragmentBinding
 import kotlinx.android.synthetic.main.forecast_details_fragment.*
 
 
+class ForecastDetailsFragment : Fragment() {
 
-class ForecastDetailsFragment : Fragment(){
-    val TAG = ForecastDetailsFragment::class.java.simpleName
     private var mDailyForecastAdapter: DailyForecastAdapter? = null
-    private var mMetrics: DisplayMetrics?= null
+    private var mMetrics: DisplayMetrics? = null
     private lateinit var mWeatherData: InternalWeatherForecast
 
-    init{
+    init {
         setHasOptionsMenu(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding: ForecastDetailsFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.forecast_details_fragment, container, false)
-        binding.root.layoutParams.width= container!!.width
+        binding.root.layoutParams.width = container!!.width
         binding.root.requestLayout()
         mWeatherData = getData()
-        val itemVM = WeatherViewModelFactory(context!!,  mWeatherData, true)
-                .create(WeatherByDayItemViewModel::class.java)
+        val itemVM = WeatherViewModelFactory(context!!, mWeatherData, true).create(WeatherByDayItemViewModel::class.java)
         binding.details?.viewModel = itemVM
         setHasOptionsMenu(true)
         return binding.root
     }
 
-    private fun getData(): InternalWeatherForecast{
+    private fun getData(): InternalWeatherForecast {
         Log.v(ForecastListFragment.TAG, "init data")
         val viewModel = activity?.run {
             ViewModelProviders.of(this).get(MainViewModel::class.java)
@@ -66,11 +56,12 @@ class ForecastDetailsFragment : Fragment(){
         setDataToAdapter()
         mMetrics = DisplayMetrics()
         super.onViewCreated(view, savedInstanceState)
-     }
+    }
 
     companion object {
         const val SELECTED_ITEM_NUMBER = "selected item"
         fun newInstance() = ForecastDetailsFragment()
+        val TAG = ForecastDetailsFragment::class.java.simpleName
     }
 
     private fun setDataToAdapter() {
@@ -85,8 +76,7 @@ class ForecastDetailsFragment : Fragment(){
         private lateinit var context: Context
 
         override fun onBindViewHolder(holderDaily: DailyForecastViewHolder, position: Int) {
-            val itemVM = WeatherViewModelFactory(context, mDailyWeatherData[position])
-                    .create(WeatherByTimeItemViewModel::class.java)
+            val itemVM = WeatherViewModelFactory(context, mDailyWeatherData[position]).create(WeatherByTimeItemViewModel::class.java)
             holderDaily.itemViewBinding.viewModel = itemVM
         }
 
@@ -95,8 +85,7 @@ class ForecastDetailsFragment : Fragment(){
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewtype: Int): DailyForecastViewHolder {
-            val binding: ForecastByTimeItemBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context),
-                    R.layout.forecast_by_time_item, parent, false)
+            val binding: ForecastByTimeItemBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.forecast_by_time_item, parent, false)
             context = parent.context
             return DailyForecastViewHolder(binding)
         }

@@ -4,79 +4,80 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.app.weatherforecast.WeatherByDayItemViewModel" />
     </data>
 
-<android.support.constraint.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/today_day_item_selector"
-    android:padding="8dp"
-    tools:context=".ui.ForecastDetailsFragment">
-
-    <TextView
-        android:id="@+id/weather_date"
-        style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="wrap_content"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="84dp"
-        android:layout_marginTop="8dp"
-        android:textSize="30sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text='@{viewModel.date}'
-        tools:text="24 Jan Sep, Sun" />
+        android:background="@drawable/today_day_item_selector"
+        android:padding="8dp"
+        tools:context=".ui.ForecastDetailsFragment">
 
-    <ImageView
-        android:id="@+id/weather_icon"
-        android:layout_width="@dimen/large_weather_icon_size"
-        android:layout_height="@dimen/large_weather_icon_size"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="84dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/high"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src='@{viewModel.icon}'
-        tools:src="@drawable/art_clouds" />
+        <TextView
+            android:id="@+id/weather_date"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="84dp"
+            android:layout_marginTop="8dp"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text='@{viewModel.date}'
+            tools:text="24 Jan Sep, Sun" />
 
-    <TextView
-        android:id="@+id/description"
-        style="@style/TextAppearance.AppCompat.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="@+id/weather_date"
-        app:layout_constraintStart_toStartOf="@+id/weather_date"
-        app:layout_constraintTop_toBottomOf="@+id/weather_date"
-        android:text='@{viewModel.description}'
-        tools:text="Clear sky" />
+        <ImageView
+            android:id="@+id/weather_icon"
+            android:layout_width="@dimen/large_weather_icon_size"
+            android:layout_height="@dimen/large_weather_icon_size"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="84dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/high"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src='@{viewModel.icon}'
+            tools:src="@drawable/art_clouds" />
 
-    <TextView
-        android:id="@+id/high"
-        style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:textSize="30sp"
-        app:layout_constraintStart_toEndOf="@+id/weather_icon"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text='@{viewModel.tempMax}'
-        tools:text="10 C" />
+        <TextView
+            android:id="@+id/description"
+            style="@style/TextAppearance.AppCompat.Large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="@+id/weather_date"
+            app:layout_constraintStart_toStartOf="@+id/weather_date"
+            app:layout_constraintTop_toBottomOf="@+id/weather_date"
+            android:text='@{viewModel.description}'
+            tools:text="Clear sky" />
 
-    <TextView
-        android:id="@+id/low"
-        style="@style/TextAppearance.AppCompat.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="@+id/high"
-        app:layout_constraintTop_toBottomOf="@+id/high"
-        android:text='@{viewModel.tempMin}'
-        tools:text="9 C" />
+        <TextView
+            android:id="@+id/high"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:textSize="30sp"
+            app:layout_constraintStart_toEndOf="@+id/weather_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text='@{viewModel.tempMax}'
+            tools:text="10 C" />
 
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/low"
+            style="@style/TextAppearance.AppCompat.Large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="@+id/high"
+            app:layout_constraintTop_toBottomOf="@+id/high"
+            android:text='@{viewModel.tempMin}'
+            tools:text="9 C" />
+
+    </android.support.constraint.ConstraintLayout>
 </layout>

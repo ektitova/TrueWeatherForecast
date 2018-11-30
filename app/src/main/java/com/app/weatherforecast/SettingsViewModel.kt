@@ -8,7 +8,7 @@ import android.os.Build
 import android.util.Log
 import com.app.weatherforecast.utils.NotificationUtils
 
-class SettingsViewModel  : ViewModel() {
+class SettingsViewModel : ViewModel() {
     private val TAG = MainViewModel::class.java.simpleName
 
     /**
@@ -33,7 +33,10 @@ class SettingsViewModel  : ViewModel() {
         context.startActivity(Intent.createChooser(intent, context.getString(R.string.choose_email_client)))
     }
 
-    fun sendNotififcation(context: Context){
+    /**
+     * Method to test notifications
+     */
+    fun sendNotififcation(context: Context) {
         NotificationUtils.notifyUserOfWeatherUpdate(context)
     }
 

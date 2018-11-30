@@ -3,17 +3,16 @@ package com.app.weatherforecast
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
-import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
 import com.app.weatherforecast.data.InternalWeatherForecast
 import com.app.weatherforecast.data.WeatherDataProvider
 import com.app.weatherforecast.data.WeatherSharedPreferences
 import com.firebase.jobdispatcher.*
-import java.util.ArrayList
+import java.util.*
 import java.util.concurrent.TimeUnit
 
-class MainViewModel (application: Application) : AndroidViewModel(application) {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val TAG = MainViewModel::class.java.simpleName
     private val context = application.applicationContext;
 
@@ -31,7 +30,7 @@ class MainViewModel (application: Application) : AndroidViewModel(application) {
     /**
      * execute async task to fetch car data
      */
-    fun loadWeatherList():  ArrayList<InternalWeatherForecast>?{
+    fun loadWeatherList(): ArrayList<InternalWeatherForecast>? {
         Log.v(TAG, "load car list")
         val weatherJson = WeatherSharedPreferences.getWeatherForecastJson(context)
         if (weatherJson.isNullOrEmpty()) {
@@ -43,7 +42,7 @@ class MainViewModel (application: Application) : AndroidViewModel(application) {
         return null
     }
 
-    fun reloadWeatherList(){
+    fun reloadWeatherList() {
         FetchWeatherListTask().execute()
     }
 
@@ -57,7 +56,7 @@ class MainViewModel (application: Application) : AndroidViewModel(application) {
         }
 
         override fun onPostExecute(weatherList: ArrayList<InternalWeatherForecast>?) {
-           /// weatherForecast.value = weatherList
+            /// weatherForecast.value = weatherList
             weatherForecast.postValue(weatherList)
         }
     }
@@ -78,17 +77,9 @@ class MainViewModel (application: Application) : AndroidViewModel(application) {
     private fun scheduleSyncWeather() {
         Log.v(TAG, "scheduleSyncWeather")
         val dispatcher = FirebaseJobDispatcher(GooglePlayDriver(context.applicationContext))
-        val syncJob = dispatcher.newJobBuilder().setService(UpdateWeatherJobService::class.java)
-                .setTag(SYNC_JOB_TAG)
-                .setConstraints(Constraint.ON_ANY_NETWORK)
-                .setLifetime(Lifetime.FOREVER)
-                .setRecurring(true)
-                .setTrigger(Trigger.executionWindow(SYNC_INTERVAL_SECONDS,
-                        SYNC_INTERVAL_SECONDS + SYNC_FLEXTIME_SECONDS))
-                .setReplaceCurrent(true).build()
+        val syncJob = dispatcher.newJobBuilder().setService(UpdateWeatherJobService::class.java).setTag(SYNC_JOB_TAG).setConstraints(Constraint.ON_ANY_NETWORK).setLifetime(Lifetime.FOREVER).setRecurring(true).setTrigger(Trigger.executionWindow(SYNC_INTERVAL_SECONDS, SYNC_INTERVAL_SECONDS + SYNC_FLEXTIME_SECONDS)).setReplaceCurrent(true).build()
         dispatcher.mustSchedule(syncJob)
     }
-   
 
 
 }

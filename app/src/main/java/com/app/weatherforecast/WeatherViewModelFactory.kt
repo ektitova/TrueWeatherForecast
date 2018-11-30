@@ -2,8 +2,8 @@ package com.app.weatherforecast
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import com.app.weatherforecast.data.InternalDayWeatherForecast
 import android.content.Context
+import com.app.weatherforecast.data.InternalDayWeatherForecast
 import com.app.weatherforecast.data.InternalWeatherForecast
 
 
@@ -17,7 +17,7 @@ class WeatherViewModelFactory(private val context: Context, vararg params: Any) 
             WeatherByTimeItemViewModel(context, mParams[0] as InternalDayWeatherForecast) as T
         } else if (modelClass == WeatherByDayItemViewModel::class.java) {
             WeatherByDayItemViewModel(context, mParams[0] as InternalWeatherForecast, mParams[1] as Boolean) as T
-        }  else {
+        } else {
             super.create(modelClass)
         }
     }

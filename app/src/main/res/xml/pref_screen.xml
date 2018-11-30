@@ -14,8 +14,9 @@
         android:key="@string/pref_units_key"
         android:title="@string/pref_units_label" />
 
-    <Preference android:title="@string/send_feedback"
-        android:key="@string/key_send_feedback"/>
+    <Preference
+        android:title="@string/send_feedback"
+        android:key="@string/key_send_feedback" />
 
     <CheckBoxPreference
         android:title="@string/show_notification"
@@ -23,7 +24,8 @@
         android:summary="@string/pref_show_notification_summary"
         android:key="checkboxPref" />
 
-    <Preference android:title="@string/send_notification"
-        android:key="@string/key_send_notification"/>
+    <Preference
+        android:title="@string/send_notification"
+        android:key="@string/key_send_notification" />
 </PreferenceScreen>
 

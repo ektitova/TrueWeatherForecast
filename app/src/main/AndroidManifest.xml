@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_round"
@@ -11,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.app.weatherforecast.ui.MainActivity"
+        <activity
+            android:name=".ui.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,16 +21,12 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.app.weatherforecast.ui.SettingsActivity"></activity>
-        <service android:enabled="true"
-            android:exported="false"
-            android:name="com.app.weatherforecast.WeatherBackgroundSyncService" />
         <service
-            android:name="com.app.weatherforecast.UpdateWeatherJobService"
+            android:name=".UpdateWeatherJobService"
             android:exported="false">
-        <intent-filter>
-            <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
-        </intent-filter>
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
+            </intent-filter>
         </service>
     </application>
 

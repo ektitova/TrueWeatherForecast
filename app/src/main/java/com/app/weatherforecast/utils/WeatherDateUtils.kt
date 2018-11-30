@@ -19,20 +19,21 @@ object WeatherDateUtils {
     /**
      * This method returns the number of days since the epoch January 01, 1970
      */
-    fun getDayNumber(date: Long): Long {
-        Log.v(TAG, "get day number from the date: " + Date(date))
+    fun getDayNumber(dateInMillis: Long): Long {
+        Log.v(TAG, "get day number from the date: " + Date(dateInMillis))
         val tz = TimeZone.getDefault()
-        val gmtOffset = tz.getOffset(date).toLong()
-        return (date + gmtOffset) / DAY_IN_MILLIS
+        val gmtOffset = tz.getOffset(dateInMillis).toLong()
+        return (dateInMillis + gmtOffset) / DAY_IN_MILLIS
     }
 
     /**
      * This method returns formatted time to display in HH:mm
      */
-    fun getFormattedTime(date: Long): String {
-        Log.v(TAG, "get formatted time from the date: " + Date(date))
-        val localDateFormat = SimpleDateFormat("HH:mm")
-        return localDateFormat.format(date)
+    fun getFormattedTime(dateInMillis: Long): String {
+        Log.v(TAG, "get formatted time from the date: " + Date(dateInMillis))
+        if (dateInMillis < 0) return ""
+        val localDate = dateInMillis - TimeZone.getDefault().getOffset(dateInMillis).toLong()
+        return SimpleDateFormat("HH:mm", Locale.getDefault()).format(localDate)
     }
 
     /**
@@ -48,7 +49,7 @@ object WeatherDateUtils {
             val readableDate = DateUtils.formatDateTime(context, localDate, DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_SHOW_WEEKDAY)
             //insert Today
             if (dayNumber - currentDayNumber < 1) {
-                val localizedDayName = SimpleDateFormat("EEEE").format(localDate)
+                val localizedDayName = SimpleDateFormat("EEEE", Locale.getDefault()).format(localDate)
                 return readableDate.replace(localizedDayName, context.getString(R.string.today))
             } else {
                 return readableDate

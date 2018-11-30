@@ -53,8 +53,6 @@ data class ForecastRecord(private val dt: Double, val main: Main?, val pressure:
 data class WeatherForecast(val city: City, val cod: String, val message: Double, val cnt: Int, val list: List<ForecastRecord>)
 
 
-
-
 /**
  * data class to store detailed weather forecast for the day
  */
@@ -63,4 +61,4 @@ data class InternalDayWeatherForecast(val weatherId: Int, val time: Long, val hu
 /**
  * data class to store average weather forecast for the day and detailed weather forecast
  */
-data class InternalWeatherForecast( val date: Long, val maxTemperature: Double, val minTemperature: Double, val description: String, val dailyForecasts: List<InternalDayWeatherForecast>)
+data class InternalWeatherForecast(val date: Long, val maxTemperature: Double, val minTemperature: Double, val description: String, val dailyForecasts: List<InternalDayWeatherForecast>)

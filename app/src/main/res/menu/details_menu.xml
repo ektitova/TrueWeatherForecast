@@ -10,7 +10,7 @@
         android:icon="@android:drawable/ic_menu_share"
         android:orderInCategory="100"
         app:showAsAction="ifRoom|withText"
-        android:title="@string/share"/>
+        android:title="@string/share" />
     <item
         android:id="@+id/action_settings"
         android:icon="@android:drawable/ic_menu_preferences"

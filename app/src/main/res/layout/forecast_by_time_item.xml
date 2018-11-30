@@ -3,59 +3,61 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.app.weatherforecast.WeatherByTimeItemViewModel" />
     </data>
-<LinearLayout
-    android:id="@+id/forecast_item"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center_horizontal"
-    android:padding="10dp">
 
-    <TextView
-        android:id="@+id/weather_time"
-        style="@style/TextAppearance.AppCompat.Large"
+    <LinearLayout
+        android:id="@+id/forecast_item"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/forecast_by_time_item_margin_top"
-        android:layout_gravity="center_horizontal|center_vertical"
-        android:text='@{viewModel.date}'
-        tools:text="12:00" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="10dp">
 
-    <ImageView
-        android:id="@+id/weather_icon"
-        android:layout_width="@dimen/large_weather_icon_size"
-        android:layout_height="@dimen/large_weather_icon_size"
-        android:layout_marginTop="@dimen/forecast_by_time_item_margin_top"
-        android:layout_gravity="center_horizontal|center_vertical"
-        android:src='@{viewModel.icon}'
-        tools:src="@drawable/art_clouds" />
+        <TextView
+            android:id="@+id/weather_time"
+            style="@style/TextAppearance.AppCompat.Large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/forecast_by_time_item_margin_top"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:text='@{viewModel.date}'
+            tools:text="12:00" />
+
+        <ImageView
+            android:id="@+id/weather_icon"
+            android:layout_width="@dimen/large_weather_icon_size"
+            android:layout_height="@dimen/large_weather_icon_size"
+            android:layout_marginTop="@dimen/forecast_by_time_item_margin_top"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:src='@{viewModel.icon}'
+            tools:src="@drawable/art_clouds" />
 
 
-    <TextView
-        android:id="@+id/description"
-        style="@style/TextAppearance.AppCompat.Large"
-        android:layout_gravity="center_horizontal|center_vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1.0"
-        android:layout_marginTop="@dimen/forecast_by_time_item_margin_top"
-        android:maxLines= "3"
-        android:text='@{viewModel.description}'
-        tools:text="Clear sky" />
+        <TextView
+            android:id="@+id/description"
+            style="@style/TextAppearance.AppCompat.Large"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1.0"
+            android:layout_marginTop="@dimen/forecast_by_time_item_margin_top"
+            android:maxLines="3"
+            android:text='@{viewModel.description}'
+            tools:text="Clear sky" />
 
-    <TextView
-        android:id="@+id/temperature"
-        style="@style/TextAppearance.AppCompat.Large"
-        android:layout_gravity="center_horizontal|center_vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/forecast_by_time_item_margin_top"
-        android:text='@{viewModel.temp}'
-        tools:text="10 C/8 C" />
+        <TextView
+            android:id="@+id/temperature"
+            style="@style/TextAppearance.AppCompat.Large"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/forecast_by_time_item_margin_top"
+            android:text='@{viewModel.temp}'
+            tools:text="10 C/8 C" />
 
-</LinearLayout>
+    </LinearLayout>
 </layout>

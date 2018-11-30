@@ -23,7 +23,9 @@ object NotificationUtils {
     //The channel is required for Android Oreo
     private const val WEATHER_NOTIFICATION_CHANNEL_ID = "weather_notification_channel"
 
-
+    /**
+     * notify user of weather updated for today
+     */
     fun notifyUserOfWeatherUpdate(context: Context) {
         val todayIndex = 0
         val weatherJson = WeatherSharedPreferences.getWeatherForecastJson(context)
@@ -38,8 +40,7 @@ object NotificationUtils {
             val low = WeatherUtils.formatTemperature(context, data[todayIndex].minTemperature)
 
             val resources = context.resources
-            val largeArtResourceId = WeatherUtils
-                    .getArtResourceForMainWeatherCondition(data[todayIndex].description)
+            val largeArtResourceId = WeatherUtils.getArtResourceForMainWeatherCondition(data[todayIndex].description)
             val largeIcon = BitmapFactory.decodeResource(resources, largeArtResourceId)
 
             val notificationText = "Forecast: $description \nHigh: $high \nLow: $low"
@@ -47,23 +48,15 @@ object NotificationUtils {
 
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val startActivityIntent = Intent(context.applicationContext, ForecastDetailsFragment::class.java)
-          //  startActivityIntent.putExtra(ForecastDetailsFragment.INTENT_WEATHER_DATA, todayIndex)
+            //  startActivityIntent.putExtra(ForecastDetailsFragment.INTENT_WEATHER_DATA, todayIndex)
             val pendingIntent = PendingIntent.getActivity(context, WEATHER_NOTIFICATION_ID, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-            val builder = NotificationCompat.Builder(context)
-                    .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                    .setSmallIcon(largeArtResourceId)
-                    .setLargeIcon(largeIcon)
-                    .setContentTitle(notificationTitle)
-                    .setContentText(notificationText)
-                    .setContentIntent(pendingIntent)
-                    .setAutoCancel(true)
+            val builder = NotificationCompat.Builder(context).setColor(ContextCompat.getColor(context, R.color.colorPrimary)).setSmallIcon(largeArtResourceId).setLargeIcon(largeIcon).setContentTitle(notificationTitle).setContentText(notificationText).setContentIntent(pendingIntent).setAutoCancel(true)
 
 
             //The channel is requied for Android Oreo
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 builder.setChannelId(WEATHER_NOTIFICATION_CHANNEL_ID)
-                val notificationChannel = NotificationChannel(WEATHER_NOTIFICATION_CHANNEL_ID,
-                        "Weather update", NotificationManager.IMPORTANCE_HIGH)
+                val notificationChannel = NotificationChannel(WEATHER_NOTIFICATION_CHANNEL_ID, "Weather update", NotificationManager.IMPORTANCE_HIGH)
                 notificationChannel.enableLights(true)
                 builder.setChannelId(WEATHER_NOTIFICATION_CHANNEL_ID)
                 notificationManager.createNotificationChannel(notificationChannel)
@@ -72,7 +65,6 @@ object NotificationUtils {
                 builder.priority = NotificationCompat.PRIORITY_HIGH
             }
             notificationManager.notify(WEATHER_NOTIFICATION_ID, builder.build())
-
             WeatherSharedPreferences.saveNotificationTime(context)
         }
     }

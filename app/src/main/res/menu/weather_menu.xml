@@ -5,16 +5,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.MainActivity">
 
-        <item
-            android:id="@+id/action_map"
-            android:icon="@android:drawable/ic_menu_mapmode"
-            android:orderInCategory="100"
-            app:showAsAction="ifRoom|withText"
-            android:title="@string/map" />
-        <item
-            android:id="@+id/action_settings"
-            android:icon="@android:drawable/ic_menu_preferences"
-            android:orderInCategory="100"
-            app:showAsAction="ifRoom|withText"
-            android:title="@string/settings" />
+    <item
+        android:id="@+id/action_map"
+        android:icon="@android:drawable/ic_menu_mapmode"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/map" />
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/settings" />
 </menu>

@@ -10,7 +10,9 @@ class UpdateWeatherJobService : JobService() {
     val TAG = UpdateWeatherJobService::class.java.simpleName
     private var mloadWeatherTask: AsyncTask<Void, Void, Void>? = null
 
-
+    /**
+     * Stop to update weather by schedule
+     */
     override fun onStopJob(job: JobParameters?): Boolean {
         Log.v(TAG, "onStopJob")
         mloadWeatherTask?.cancel(true)
