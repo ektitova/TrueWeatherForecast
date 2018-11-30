@@ -32,8 +32,7 @@ object WeatherDateUtils {
     fun getFormattedTime(dateInMillis: Long): String {
         Log.v(TAG, "get formatted time from the date: " + Date(dateInMillis))
         if (dateInMillis < 0) return ""
-        val localDate = dateInMillis - TimeZone.getDefault().getOffset(dateInMillis).toLong()
-        return SimpleDateFormat("HH:mm", Locale.getDefault()).format(localDate)
+        return SimpleDateFormat("HH:mm", Locale.getDefault()).format(dateInMillis)
     }
 
     /**
