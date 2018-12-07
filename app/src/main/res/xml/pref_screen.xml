@@ -21,7 +21,8 @@
     <CheckBoxPreference
         android:title="@string/show_notification"
         android:defaultValue="true"
-        android:summary="@string/pref_show_notification_summary"
+        android:summaryOn= "@string/pref_show_notification_summary"
+        android:summaryOff="@string/pref_dont_show_notification_summary"
         android:key="checkboxPref" />
 
     <Preference

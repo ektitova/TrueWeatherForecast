@@ -22,14 +22,22 @@ class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
         Log.v(TAG, "onCreate()")
         setContentView(R.layout.activity_main)
         val mainFragment = ForecastListFragment.newInstance()
-        supportFragmentManager.beginTransaction().add(R.id.contentFrame, mainFragment).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.contentFrame, mainFragment).commit()
     }
 
     /**
      * update fragment view
      */
-    private fun updateView(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().replace(R.id.contentFrame, fragment).addToBackStack(null).commit()
+    private fun updateView(fragment: Fragment, TAG: String) {
+        supportFragmentManager.beginTransaction().replace(R.id.contentFrame, fragment,TAG).addToBackStack(null).commit()
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStackImmediate()
+        } else {
+            super.onBackPressed()
+        }
     }
 
     override fun onResume() {
@@ -51,7 +59,7 @@ class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
             }
             R.id.action_settings -> {
                 val settingsFragmentFragment = SettingsFragment.newInstance()
-                updateView(settingsFragmentFragment)
+                updateView(settingsFragmentFragment, SettingsFragment.TAG)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -79,7 +87,7 @@ class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
             bundle.putInt(ForecastDetailsFragment.SELECTED_ITEM_NUMBER, data as Int)
             val detailFragment = ForecastDetailsFragment.newInstance()
             detailFragment.arguments = bundle
-            updateView(detailFragment)
+            updateView(detailFragment, ForecastDetailsFragment.TAG)
         }
     }
 

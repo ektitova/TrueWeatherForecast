@@ -25,13 +25,10 @@ class WeatherDataProvider {
         val weatherRequestUrl = NetworkUtils.buildUrl(location)
         try {
             val jsonWeatherResponse = NetworkUtils.requestByUrl(weatherRequestUrl)
-            if (jsonWeatherResponse != null) {
-                WeatherSharedPreferences.saveWeatherForecastJson(context, jsonWeatherResponse)
-                saveNotificationTime(context)
-                return getWeatherByDayFromJson(jsonWeatherResponse)
-            } else return null
+            WeatherSharedPreferences.saveWeatherForecastJson(context, jsonWeatherResponse)
+            saveNotificationTime(context)
+            return getWeatherByDayFromJson(jsonWeatherResponse)
         } catch (e: Exception) {
-            e.printStackTrace()
             return null
         }
     }
@@ -41,8 +38,7 @@ class WeatherDataProvider {
      */
     private fun saveNotificationTime(context: Context) {
         Log.v(TAG, "save last notification time and notify if it is needed")
-        val timePassed = Calendar.getInstance().get(Calendar.SECOND)
-        -WeatherSharedPreferences.getNotificationTime(context)
+        val timePassed = Calendar.getInstance().get(Calendar.SECOND) - WeatherSharedPreferences.getNotificationTime(context)
         if (WeatherSharedPreferences.isNotificationsEnabled(context) && timePassed > NOTIFICATIONS_INTERVAL_SECOND) {
             NotificationUtils.notifyUserOfWeatherUpdate(context)
         }

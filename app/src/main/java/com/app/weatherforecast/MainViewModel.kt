@@ -12,9 +12,8 @@ import com.firebase.jobdispatcher.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+class MainViewModel(val context: Application) : AndroidViewModel(context) {
     private val TAG = MainViewModel::class.java.simpleName
-    private val context = application.applicationContext;
 
     //whole weather foresasts structure
     var weatherForecast = MutableLiveData<ArrayList<InternalWeatherForecast>?>()
@@ -59,7 +58,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         override fun onPostExecute(weatherList: ArrayList<InternalWeatherForecast>?) {
-            /// weatherForecast.value = weatherList
             weatherForecast.postValue(weatherList)
         }
     }

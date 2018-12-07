@@ -2,13 +2,6 @@
     <string name="app_name">TrueWeatherForecast</string>
 
     <string name="today">Today</string>
-    <string name="format_temperature_celsius">
-        <xliff:g id="temp">%1.0f</xliff:g>\u00B0C
-    </string>
-    <string name="format_temperature_fahrenheit">
-        <xliff:g id="temp">%1.0f</xliff:g>\u00B0F
-    </string>
-
     <string name="refresh">Refresh</string>
     <string name="error_message">Request failed. Please try again</string>
     <string name="no_weather_details">No weather details</string>
@@ -18,7 +11,7 @@
 
     <string name="pref_location_label">Location</string>
     <string name="pref_location_key" translatable="false">location</string>
-    <string name="pref_location_default" translatable="false">London,uk</string>
+    <string name="pref_location_default" translatable="false">Vancouver,ca</string>
     <string name="pref_units_label">Temperature Units</string>
     <string name="pref_units_label_metric">Metric</string>
     <string name="pref_units_label_imperial">Imperial</string>
@@ -30,6 +23,7 @@
     <string name="choose_email_client">Choose email client</string>
     <string name="show_notification">Show notifications</string>
     <string name="pref_show_notification_summary">Show notification about weather changing</string>
+    <string name="pref_dont_show_notification_summary">Don\'t show notification about weather changing</string>
     <string name="key_send_notification">pref_send_notification</string>
     <string name="send_notification">Send notification</string>
 

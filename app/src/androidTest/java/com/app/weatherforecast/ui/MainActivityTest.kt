@@ -23,7 +23,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class MainActivityTest {
 
-    @Rule
+    @Rule @JvmField
     var rule = ActivityTestRule(MainActivity::class.java)
     private lateinit var mainActivity: MainActivity
 
@@ -54,11 +54,22 @@ class MainActivityTest {
     }
 
     /**
-     * test click on the item, detail view displayed
+     * test click on the Today item, detail view displayed
      */
     @Test
-    fun testClickOnItem_checkIfDetailsIsDisplayed() {
-        val itemNum = 1
+    fun testClickOnTodayItem_checkIfDetailsIsDisplayed() {
+        val itemNum = 0
+        onView(withId(R.id.listResults)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(itemNum, click()))
+        val fragmentManager = mainActivity.supportFragmentManager
+        Assert.assertNotNull(fragmentManager.findFragmentByTag(ForecastDetailsFragment.TAG))
+    }
+
+    /**
+     * test click on any item, detail view displayed
+     */
+    @Test
+    fun testClickOnAnyItem_checkIfDetailsIsDisplayed() {
+        val itemNum = 2
         onView(withId(R.id.listResults)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(itemNum, click()))
         val fragmentManager = mainActivity.supportFragmentManager
         Assert.assertNotNull(fragmentManager.findFragmentByTag(ForecastDetailsFragment.TAG))

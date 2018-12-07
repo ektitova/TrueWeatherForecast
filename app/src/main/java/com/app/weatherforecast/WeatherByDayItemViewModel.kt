@@ -39,8 +39,7 @@ class WeatherByDayItemViewModel(val context: Context, private val weatherData: I
      *  returns max temperature
      */
     fun getTempMax(): ObservableField<String> {
-        val roundedHigh = Math.round(weatherData.maxTemperature)
-        tempMax = ObservableField(WeatherUtils.formatTemperature(context, roundedHigh.toDouble()))
+        tempMax = ObservableField(WeatherUtils.formatTemperature(context, weatherData.maxTemperature))
         return tempMax
     }
 
@@ -48,8 +47,7 @@ class WeatherByDayItemViewModel(val context: Context, private val weatherData: I
      *  returns min temperature
      */
     fun getTempMin(): ObservableField<String> {
-        val roundedLow = Math.round(weatherData.minTemperature)
-        tempMin = ObservableField(WeatherUtils.formatTemperature(context, roundedLow.toDouble()))
+        tempMin = ObservableField(WeatherUtils.formatTemperature(context, weatherData.minTemperature))
         return tempMin
     }
 

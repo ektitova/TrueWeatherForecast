@@ -35,7 +35,7 @@ object NetworkUtils {
 
 
     @Throws(IOException::class)
-    fun requestByUrl(url: URL): String? {
+    fun requestByUrl(url: URL): String {
         val conn = url.openConnection() as HttpURLConnection
         var stream: InputStream? = null
         try {

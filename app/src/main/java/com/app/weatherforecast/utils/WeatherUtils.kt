@@ -27,29 +27,25 @@ object WeatherUtils {
      */
     fun formatTemperature(context: Context, temp: Double): String {
         val temperature: Double
-        val temperatureFormatResourceId: Int
+        val temperatureFormat: String
 
         if (WeatherSharedPreferences.isMetric(context)) {
             temperature = kelvinToCelsius(temp)
-            temperatureFormatResourceId = R.string.format_temperature_celsius
+            temperatureFormat = "%d\u00B0C"
         } else {
             temperature = kelvinToFahrenheit(temp)
-            temperatureFormatResourceId = R.string.format_temperature_fahrenheit
+            temperatureFormat = "%d\u00B0F"
         }
 
-        return String.format(context.getString(temperatureFormatResourceId), temperature)
+        return String.format(temperatureFormat, Math.round(temperature))
     }
 
     /**
      * format temperature in F/F or C/C
      */
     fun formatHighLowTemperature(context: Context, high: Double, low: Double): String {
-        val roundedHigh = Math.round(high)
-        val roundedLow = Math.round(low)
-
-        val formattedHigh = formatTemperature(context, roundedHigh.toDouble())
-        val formattedLow = formatTemperature(context, roundedLow.toDouble())
-
+        val formattedHigh = formatTemperature(context, high)
+        val formattedLow = formatTemperature(context, low)
         return "$formattedHigh / $formattedLow"
     }
 

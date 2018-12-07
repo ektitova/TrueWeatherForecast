@@ -41,21 +41,20 @@ object WeatherDateUtils {
     fun getFormattedDate(context: Context, dateInMillis: Long, showFullDate: Boolean): String {
         Log.v(TAG, "get formatted date from the ms: $dateInMillis with details $showFullDate")
         //convert the given date in UTC timezone to the date in the local timezone
-        val localDate = dateInMillis - TimeZone.getDefault().getOffset(dateInMillis).toLong()
-        val dayNumber = getDayNumber(localDate)
+        val dayNumber = getDayNumber(dateInMillis)
         val currentDayNumber = getDayNumber(System.currentTimeMillis())
         if (dayNumber == currentDayNumber || showFullDate) {
-            val readableDate = DateUtils.formatDateTime(context, localDate, DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_SHOW_WEEKDAY)
+            val readableDate = DateUtils.formatDateTime(context, dateInMillis, DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_SHOW_WEEKDAY)
             //insert Today
             if (dayNumber - currentDayNumber < 1) {
-                val localizedDayName = SimpleDateFormat("EEEE", Locale.getDefault()).format(localDate)
+                val localizedDayName = SimpleDateFormat("EEEE", Locale.getDefault()).format(dateInMillis)
                 return readableDate.replace(localizedDayName, context.getString(R.string.today))
             } else {
                 return readableDate
             }
         } else {
             val flags = (DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_ABBREV_ALL or DateUtils.FORMAT_SHOW_WEEKDAY)
-            return DateUtils.formatDateTime(context, localDate, flags)
+            return DateUtils.formatDateTime(context, dateInMillis, flags)
         }
     }
 

@@ -16,8 +16,8 @@ object WeatherSharedPreferences {
     fun saveWeatherForecastJson(context: Context, weatherJson: String) {
         Log.v(TAG, "saveWeatherForecastJson $weatherJson")
         val sp = PreferenceManager.getDefaultSharedPreferences(context)
-        val storedWearherJson = sp.getString("weatherJson", "")
-        if (storedWearherJson != weatherJson) {
+        val storedWeatherJson = sp.getString("weatherJson", "")
+        if (storedWeatherJson != weatherJson) {
             val prefEditor = sp.edit()
             prefEditor.putString("weatherJson", weatherJson) //**syntax error on tokens**
             prefEditor.apply()
