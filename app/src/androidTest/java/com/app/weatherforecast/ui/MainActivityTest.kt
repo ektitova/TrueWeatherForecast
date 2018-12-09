@@ -4,11 +4,12 @@ package com.app.weatherforecast.ui
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.contrib.RecyclerViewActions
-import android.support.test.espresso.matcher.ViewMatchers.assertThat
-import android.support.test.espresso.matcher.ViewMatchers.withId
+import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.filters.LargeTest
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
+import android.support.v4.app.FragmentManager
+
 import android.support.v7.widget.RecyclerView
 import com.app.weatherforecast.R
 import org.hamcrest.CoreMatchers.notNullValue
@@ -26,11 +27,13 @@ class MainActivityTest {
     @Rule @JvmField
     var rule = ActivityTestRule(MainActivity::class.java)
     private lateinit var mainActivity: MainActivity
+    private lateinit var fragmentManager: FragmentManager
 
     @Before
     fun setActivity() {
         mainActivity = rule.activity
         mainActivity.supportFragmentManager.beginTransaction()
+        fragmentManager = mainActivity.supportFragmentManager
     }
 
     /**
@@ -71,8 +74,21 @@ class MainActivityTest {
     fun testClickOnAnyItem_checkIfDetailsIsDisplayed() {
         val itemNum = 2
         onView(withId(R.id.listResults)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(itemNum, click()))
-        val fragmentManager = mainActivity.supportFragmentManager
         Assert.assertNotNull(fragmentManager.findFragmentByTag(ForecastDetailsFragment.TAG))
     }
+
+    /**
+     * test click on settings menu item, settings view displayed
+     */
+    @Test
+    fun testActionBarOverflow_checkIfSettingsIsDisplayed() {
+        onView(withId(R.id.action_bar))
+                .perform(click())
+        // Click the settings item.
+        onView(withId(R.id.action_settings))
+                .perform(click())
+        Assert.assertNotNull(fragmentManager.findFragmentByTag(SettingsFragment.TAG))
+    }
+
 
 }

@@ -25,7 +25,7 @@ class ForecastDetailsFragmentTest {
     private lateinit var mainActivity: MainActivity
 
     @Before
-    fun setActivity() {
+    fun setFragment() {
         mainActivity = rule.activity
         mainActivity.supportFragmentManager.beginTransaction()
         //open the detailed view, not today
