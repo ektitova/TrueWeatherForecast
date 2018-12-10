@@ -80,7 +80,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         // send notification click listener
         val sendNotification = findPreference(getString(R.string.key_send_notification))
         sendNotification!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            viewModel?.sendNotififcation(context!!.applicationContext)
+            viewModel?.sendNotification(context!!.applicationContext)
             true
         }
     }

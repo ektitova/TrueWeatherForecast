@@ -42,7 +42,7 @@ object WeatherSharedPreferences {
     fun isNotificationsEnabled(context: Context): Boolean {
         Log.v(TAG, "isNotificationsEnabled ")
         val sp = PreferenceManager.getDefaultSharedPreferences(context)
-        return sp.getBoolean("checkboxPref", false)
+        return sp.getBoolean(context.getString(R.string.pref_is_notifications_enabled_key), false)
     }
 
     /**

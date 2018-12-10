@@ -20,7 +20,7 @@ class SettingsViewModel : ViewModel() {
         Log.v(TAG, "sendFeedback()")
         var body: String? = null
         try {
-            body = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName
+            body = context.packageManager.getPackageInfo(context.packageName, 0).versionName
             body = "\n\n-----------------------------\nPlease don't remove this information\n Device OS: Android \n Device OS version: " + Build.VERSION.RELEASE + "\n App Version: " + body + "\n Device Brand: " + Build.BRAND + "\n Device Model: " + Build.MODEL + "\n Device Manufacturer: " + Build.MANUFACTURER
         } catch (e: PackageManager.NameNotFoundException) {
         }
@@ -36,7 +36,7 @@ class SettingsViewModel : ViewModel() {
     /**
      * Method to test notifications
      */
-    fun sendNotififcation(context: Context) {
+    fun sendNotification(context: Context) {
         NotificationUtils.notifyUserOfWeatherUpdate(context)
     }
 

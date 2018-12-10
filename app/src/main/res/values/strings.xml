@@ -9,6 +9,7 @@
     <string name="map">Map</string>
     <string name="settings">Settings</string>
 
+    <string name="pref_is_notifications_enabled_key" translatable="false">isNotificationsEnabled</string>
     <string name="pref_location_label">Location</string>
     <string name="pref_location_key" translatable="false">location</string>
     <string name="pref_location_default" translatable="false">Vancouver,ca</string>

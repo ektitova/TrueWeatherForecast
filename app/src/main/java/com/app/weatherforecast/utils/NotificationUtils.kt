@@ -1,5 +1,6 @@
 package com.app.weatherforecast.utils
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -44,14 +45,13 @@ object NotificationUtils {
             val largeIcon = BitmapFactory.decodeResource(resources, largeArtResourceId)
 
             val notificationText = "Forecast: $description \nHigh: $high \nLow: $low"
-            val notificationTitle = context.getString(R.string.app_name)
+            val notificationTitle = context.getString(R.string.today)
 
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val startActivityIntent = Intent(context.applicationContext, ForecastDetailsFragment::class.java)
             //  startActivityIntent.putExtra(ForecastDetailsFragment.INTENT_WEATHER_DATA, todayIndex)
             val pendingIntent = PendingIntent.getActivity(context, WEATHER_NOTIFICATION_ID, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT)
             val builder = NotificationCompat.Builder(context).setColor(ContextCompat.getColor(context, R.color.colorPrimary)).setSmallIcon(largeArtResourceId).setLargeIcon(largeIcon).setContentTitle(notificationTitle).setContentText(notificationText).setContentIntent(pendingIntent).setAutoCancel(true)
-
 
             //The channel is requied for Android Oreo
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

@@ -1,71 +1,79 @@
 package com.app.weatherforecast.ui
 
+import android.app.Activity
+import android.app.Instrumentation
 import android.support.test.espresso.Espresso
 import android.support.test.espresso.action.ViewActions
-import android.support.test.espresso.contrib.RecyclerViewActions
 import android.support.test.espresso.matcher.ViewMatchers
 import android.support.test.filters.LargeTest
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
-import android.support.v7.widget.RecyclerView
 import com.app.weatherforecast.R
 import org.junit.Before
 import org.junit.Rule
 import org.junit.runner.RunWith
 import android.support.test.espresso.Espresso.onView
+import android.content.Context
 import android.content.Intent
-import android.R.id.edit
 import android.support.test.InstrumentationRegistry.getInstrumentation
-import android.support.test.InstrumentationRegistry.getTargetContext
 import android.support.v7.preference.PreferenceManager
 import android.content.SharedPreferences
+import android.support.test.InstrumentationRegistry
 import android.support.test.espresso.Espresso.onData
+import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.assertion.ViewAssertions.matches
-import android.support.test.espresso.matcher.PreferenceMatchers
+import android.support.test.espresso.intent.Intents
+import android.support.test.espresso.intent.Intents.intended
+import android.support.test.espresso.intent.Intents.intending
+import android.support.test.espresso.intent.matcher.IntentMatchers
+import android.support.test.espresso.intent.matcher.IntentMatchers.*
+import android.support.test.espresso.intent.rule.IntentsTestRule
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.v7.preference.Preference
 
 import org.junit.Test
 import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
 import org.hamcrest.Matchers.*
-import android.support.test.espresso.Espresso.onData
-import android.support.test.espresso.matcher.ViewMatchers.withParent
-import android.support.test.espresso.Espresso.onData
-import android.support.test.espresso.DataInteraction
-import android.support.test.espresso.matcher.PreferenceMatchers.*
-import android.text.TextUtils
-import android.view.View
-import org.hamcrest.Description
-import org.hamcrest.Matcher
-import org.hamcrest.TypeSafeMatcher
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiObject2
+import androidx.test.uiautomator.Until
+import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertTrue
 
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
 class SettingsFragmentTest {
 
+
+
     @Rule
     @JvmField
-    var rule = ActivityTestRule(MainActivity::class.java)
+    var rule = IntentsTestRule(MainActivity::class.java)
+  //  var rule = ActivityTestRule(MainActivity::class.java)
     private lateinit var mainActivity: MainActivity
     private lateinit var preferencesEditor: SharedPreferences.Editor
+    private lateinit var targetContext: Context
+    private lateinit var uiDevice:UiDevice
 
     @Before
     fun setFragment() {
         mainActivity = rule.activity
+        // By default Espresso Intents does not stub any Intents. Stubbing needs to be setup before
+        // every test run. In this case all external Intents will be blocked.
         mainActivity.supportFragmentManager.beginTransaction()
         Espresso.onView(ViewMatchers.withId(R.id.action_bar))
                 .perform(ViewActions.click())
         // Click the settings item.
         Espresso.onView(ViewMatchers.withId(R.id.action_settings))
                 .perform(ViewActions.click())
-        val targetContext = getInstrumentation().targetContext
+        targetContext = getInstrumentation().targetContext
         preferencesEditor = PreferenceManager.getDefaultSharedPreferences(targetContext).edit()
+        uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     }
 
-    /**
-     * test that all settings are displayed correctly
-     */
+
     @Test
     fun checkSettingsDisplayedCorrectlyTest() {
         onView(withText(R.string.pref_location_label)).check(matches(isDisplayed()))
@@ -75,41 +83,80 @@ class SettingsFragmentTest {
         onView(withText(R.string.send_notification)).check(matches(isDisplayed()))
     }
 
-    /**
-     * test that all Location settings changed correctly
-     */
     @Test
-    fun populateLocationFromSharedPrefsTest() {
-        preferencesEditor.putString("Location", "Moscow,ru")
+    fun testLocationPreferences_checkPopulateLocationFromSharedPrefs() {
+        val res = targetContext.resources
+        preferencesEditor.putString(res.getString(R.string.pref_location_key), "Moscow,ru")
         preferencesEditor.commit()
-        val res = getInstrumentation().targetContext.resources
 
-        onData(allOf(`is`(instanceOf(Preference::class.java)),
-                withKey(res.getString(R.string.pref_location_key)),
-                withTitle(R.string.pref_location_label)))
-                .inAdapterView(withParent(not(withResName("headers"))))
+        onView(withText("Moscow,ru"))
                 .check(matches(isDisplayed()))
+
+//        onData(allOf(`is`(instanceOf(Preference::class.java)),
+//                withKey(res.getString(R.string.pref_location_key)),
+//                withTitle(R.string.pref_location_label)))
+//                .inAdapterView(allOf(withId(android.R.id.list)))
+//                .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun testUnitsPreferences_checkPopulateUnitsFromSharedPrefs() {
+        val res = targetContext.resources
+        preferencesEditor.putString(res.getString(R.string.pref_units_key), res.getString(R.string.pref_units_metric))
+        preferencesEditor.commit()
+
+        onView(withText(res.getString(R.string.pref_units_metric)))
+                .check(matches(isDisplayed()))
+//        onData(allOf(`is`(instanceOf(Preference::class.java)),
+//                withKey(res.getString(R.string.pref_units_key)),
+//                withSummary(R.string.pref_units_metric)))
+//                .inAdapterView(allOf(withId(android.R.id.list)))
+//                .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun testNotificationsPreferences_checkPopulateIsNotificationsEnabledFromSharedPrefs() {
+        val res = targetContext.resources
+        preferencesEditor.putBoolean(res.getString(R.string.pref_is_notifications_enabled_key), true)
+        preferencesEditor.commit()
+
+        onView(withText(res.getString(R.string.pref_show_notification_summary)))
+                .check(matches(isDisplayed()))
+//        onData(allOf(`is`(instanceOf(Preference::class.java)),
+//                withKey(res.getString(R.string.pref_is_notifications_enabled_key)),
+//                withSummary(R.string.pref_show_notification_summary)))
+//                .inAdapterView(allOf(withId(android.R.id.list)))
+//                .check(matches(isDisplayed()))
     }
 
 
-    private fun withResName(resName: String): Matcher<View> {
+    @Test
+    fun testSendNotificationPreferences_shouldContainCorrectTitleAndText() {
+        val res = targetContext.resources
+        val expectedAppName = mainActivity.getString(R.string.app_name)
+        val expectedTitle = mainActivity.getString(R.string.today)
+        val expectedText = "Forecast:"
 
-        return object : TypeSafeMatcher<View>() {
-            override fun describeTo(description: Description) {
-                description.appendText("with res-name: $resName")
-            }
+        //click on send notification
+        onView(withText(res.getString(R.string.send_notification))).perform(click())
 
-            override fun matchesSafely(view: View): Boolean {
-                val identifier = view.getResources().getIdentifier(resName, "id", "android")
-                return !TextUtils.isEmpty(resName) && view.getId() === identifier
-            }
-        }
+        uiDevice.openNotification()
+        uiDevice.wait(Until.hasObject(By.textStartsWith(expectedAppName)), 1000)
+        val title: UiObject2 = uiDevice.findObject(By.text(expectedTitle))
+        val text: UiObject2 = uiDevice.findObject(By.textStartsWith(expectedText))
+        assertEquals(expectedTitle, title.text)
+        assertTrue(text.text.startsWith(expectedText))
     }
 
-    private fun onPreferenceRow(datamatcher: Matcher<out Any>): DataInteraction {
-
-        val interaction = onData(datamatcher)
-
-        return interaction.inAdapterView(allOf(withId(android.R.id.list), not(withParent(withResName("headers")))))
+    @Test
+    fun testSendFeedBackPreferences_checkIfIntentIsCorrect() {
+        val res = targetContext.resources
+        onView(withText(res.getString(R.string.send_feedback))).perform(click())
+        intended(hasExtra(`is`(Intent.EXTRA_INTENT),
+                allOf( hasAction(Intent.ACTION_SEND),
+                        hasType("message/rfc822"),
+                        hasExtra(Intent.EXTRA_SUBJECT, "Query from android app") )))
+        Intents.assertNoUnverifiedIntents()
     }
+
 }

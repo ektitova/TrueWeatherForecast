@@ -1,8 +1,6 @@
 package com.app.weatherforecast.utils
 
-import android.app.Application
 import android.content.Context
-import com.app.weatherforecast.TestConstants
 import com.app.weatherforecast.data.WeatherSharedPreferences
 import io.mockk.every
 import io.mockk.mockk
