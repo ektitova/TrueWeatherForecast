@@ -71,6 +71,8 @@ class ForecastDetailsFragmentTest {
         onView(ViewMatchers.withId(R.id.details))
                 .check(ViewAssertions.matches(ViewMatchers.hasDescendant(ViewMatchers.withId(R.id.weather_date))))
         onView(ViewMatchers.withId(R.id.details))
+                .check(matches(ViewMatchers.hasDescendant(ViewMatchers.withId(R.id.description))))
+        onView(ViewMatchers.withId(R.id.details))
                 .check(matches(ViewMatchers.hasDescendant(ViewMatchers.withId(R.id.high))))
         onView(ViewMatchers.withId(R.id.details))
                 .check(matches(ViewMatchers.hasDescendant(ViewMatchers.withId(R.id.low))))
